@@ -21,6 +21,14 @@ spec:
         name: in-cluster
       project: infra
       source:
-        path: "{{.path.path}}"
+        directory:
+          recurse: true
+        path: "deploy/{{path.basename}}"
         repoURL: https://github.com/syoder89/homelab-infra.git
         targetRevision: env/prod
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true

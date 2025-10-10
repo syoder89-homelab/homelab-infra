@@ -8,12 +8,15 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
 spec:
   description: Infra Project
-  # Allow manifests to deploy from any Git repos
-  sourceRepos:
-  - '*'
-  destinations:
-  - namespace: '*'
-    server: '*'
   clusterResourceWhitelist:
+  - group: "*"
+    kind: '*'
+  destinations:
+  - name: '*'
+    namespace: '*'
+    server: '*'
+  namespaceResourceWhitelist:
   - group: '*'
     kind: '*'
+  sourceRepos:
+  - https://github.com/syoder89/homelab-infra.git

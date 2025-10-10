@@ -6,7 +6,7 @@ metadata:
 spec:
   generators:
   - git:
-      repoURL: git@github.com:syoder89/homelab.git
+      repoURL: https://github.com/syoder89/homelab.git
       revision: env/prod
       directories:
       - path: deploy/infra/*
@@ -22,5 +22,5 @@ spec:
       project: infra
       source:
         path: deploy/infra/{{path.basename}}
-        repoURL: git@github.com:syoder89/homelab.git
+        repoURL: https://github.com/syoder89/homelab.git
         targetRevision: env/prod

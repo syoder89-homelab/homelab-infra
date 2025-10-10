@@ -9,8 +9,8 @@ spec:
       repoURL: https://github.com/syoder89/homelab-infra.git
       revision: env/prod
       directories:
-      # deploy/namespace/appname
-      - path: deploy/*/*
+      # deploy/appname
+      - path: deploy/*
   template:
     metadata:
       name: infra-{{path.basenameNormalized}}
@@ -18,10 +18,9 @@ spec:
         #kargo.akuity.io/authorized-stage: kargo-infra:{{path.basename}}
     spec:
       destination:
-        namespace: "{{index .path.segments 0}}"
         name: in-cluster
       project: infra
       source:
-        path: "deploy/{{.path.path}}"
+        path: "{{.path.path}}"
         repoURL: https://github.com/syoder89/homelab-infra.git
         targetRevision: env/prod

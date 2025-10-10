@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: infra
+  namespace: argocd
+spec:
+  generators:
+  - git:
+      repoURL: git@github.com:syoder89/homelab.git
+      revision: env/prod
+      directories:
+      - path: deploy/infra/*
+  template:
+    metadata:
+      name: infra-{{path.basename}}
+      annotations:
+        #kargo.akuity.io/authorized-stage: kargo-infra:{{path.basename}}
+    spec:
+      destination:
+        namespace: "{{path.basename}}"
+        name: in-cluster
+      project: infra
+      source:
+        path: deploy/infra/{{path.basename}}
+        repoURL: git@github.com:syoder89/homelab.git
+        targetRevision: env/prod

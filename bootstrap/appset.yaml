@@ -23,5 +23,5 @@ spec:
       project: infra
       source:
         path: "deploy/{{.path.path}}"
-        repoURL: https://github.com/syoder89/homelab.git
+        repoURL: https://github.com/syoder89/homelab-infra.git
         targetRevision: env/prod

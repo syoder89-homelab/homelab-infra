@@ -22,6 +22,6 @@ spec:
         name: in-cluster
       project: infra
       source:
-        path: deploy/{{path.path}}
+        path: deploy/{{.path.path}}
         repoURL: https://github.com/syoder89/homelab.git
         targetRevision: env/prod

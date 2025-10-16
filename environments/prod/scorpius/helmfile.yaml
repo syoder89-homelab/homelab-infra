@@ -1,12 +1,4 @@
-repositories:
-  - name: argo
-    url: https://argoproj.github.io/argo-helm
-
-releases:
-  - name: "argocd"
-    namespace: "argocd"
-    chart: "argo/argo-cd"
-    version: "8.6.0"
-    values:
-      - "../values/argocd.yaml.gotmpl"
-      - "values/argocd.yaml.gotmpl"
+helmfiles:
+- path: apps/*-helmfile.yaml
+  values:
+    - values/environment.yaml.gotmpl

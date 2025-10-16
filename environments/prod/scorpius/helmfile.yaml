@@ -3,7 +3,7 @@ repositories:
     url: https://argoproj.github.io/argo-helm
 
 releases:
-  - name: "argo-cd"
+  - name: "argocd"
     namespace: "argocd"
     chart: "argo/argo-cd"
     version: "8.6.0"

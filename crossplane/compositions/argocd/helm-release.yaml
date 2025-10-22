@@ -1,0 +1,64 @@
+apiVersion: helm.m.crossplane.io/v1beta1
+kind: Release
+metadata:
+  name: argocd
+  namespace: crossplane-system
+spec:
+# rollbackLimit: 3
+  forProvider:
+    namespace: dev-argocd
+    chart:
+      name: argo/argo-cd
+      repository: https://argoproj.github.io/argo-helm
+      version: 8.6.0
+#     pullSecretRef:
+#       name: museum-creds
+#     url: "https://charts.bitnami.com/bitnami/wordpress-9.3.19.tgz"
+#   insecureSkipTLSVerify: true
+#   wait: true
+#   skipCRDs: true
+    values:
+      server:
+        service:
+          type: LoadBalancer
+#   set:
+#     - name: param1
+#       value: value2
+#   valuesFrom:
+#     - configMapKeyRef:
+#         key: values.yaml
+#         name: default-vals
+#         optional: false
+#     - secretKeyRef:
+#         key: svalues.yaml
+#         name: svals
+#         optional: false
+#  connectionDetails:
+#    - apiVersion: v1
+#      kind: Service
+#      name: wordpress-example
+#      fieldPath: spec.clusterIP
+#      #fieldPath: status.loadBalancer.ingress[0].ip
+#      toConnectionSecretKey: ip
+#    - apiVersion: v1
+#      kind: Service
+#      name: wordpress-example
+#      fieldPath: spec.ports[0].port
+#      toConnectionSecretKey: port
+#    - apiVersion: v1
+#      kind: Secret
+#      name: wordpress-example
+#      fieldPath: data.wordpress-password
+#      toConnectionSecretKey: password
+#    - apiVersion: v1
+#      kind: Secret
+#      name: manual-api-secret
+#      fieldPath: data.api-key
+#      toConnectionSecretKey: api-key
+#      # this secret created manually (not via Helm chart), so skip 'part of helm release' check
+#      skipPartOfReleaseCheck: true
+#  writeConnectionSecretToRef:
+#    name: wordpress-credentials
+  providerConfigRef:
+    name: helm-provider-cluster
+    kind: ClusterProviderConfig

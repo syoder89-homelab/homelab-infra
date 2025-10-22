@@ -1,0 +1,18 @@
+apiVersion: meta.pkg.crossplane.io/v1
+kind: Configuration
+metadata:
+  name: infra
+  annotations:
+    meta.crossplane.io/maintainer: Scott Yoder <syoder89@gmail.com>
+    meta.crossplane.io/source: github.com/syoder89/crossplane/infra
+    meta.crossplane.io/license: Apache-2.0
+spec:
+  crossplane:
+    version: ">=v1.19.0"
+  dependsOn:
+    - provider: xpkg.upbound.io/crossplane-contrib/provider-helm
+      version: ">=v1.0.2"
+    - function: xpkg.upbound.io/crossplane-contrib/function-kcl
+      version: ">=v0.11.2"
+    - function: xpkg.upbound.io/crossplane-contrib/function-auto-ready
+      version: ">=v0.4.1"

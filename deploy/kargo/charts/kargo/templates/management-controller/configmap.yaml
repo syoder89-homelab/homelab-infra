@@ -13,7 +13,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: management-controller
 data:
-  EXTERNAL_WEBHOOK_SERVER_BASE_URL: https://localhost
+  EXTERNAL_WEBHOOK_SERVER_BASE_URL: http://localhost
   KARGO_NAMESPACE: kargo
   CLUSTER_SECRETS_NAMESPACE: kargo-cluster-secrets
   LOG_LEVEL: "INFO"

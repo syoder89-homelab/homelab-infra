@@ -7,4 +7,4 @@ appVersion: "1.8.0"
 dependencies:
   - name: kargo
     version: "1.8.0"
-    repository: "oci://ghcr.io/akuity/kargo-charts/kargo"
+    repository: "oci://ghcr.io/akuity/kargo-charts"

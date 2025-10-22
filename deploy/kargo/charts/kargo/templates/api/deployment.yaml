@@ -1,0 +1,74 @@
+---
+# Source: kargo/charts/kargo/templates/api/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kargo-api
+  namespace: kargo
+  labels:
+    helm.sh/chart: kargo-1.8.0
+    app.kubernetes.io/name: kargo
+    app.kubernetes.io/instance: kargo
+    app.kubernetes.io/version: "v1.8.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: api
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kargo
+      app.kubernetes.io/instance: kargo
+      app.kubernetes.io/component: api
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: kargo-1.8.0
+        app.kubernetes.io/name: kargo
+        app.kubernetes.io/instance: kargo
+        app.kubernetes.io/version: "v1.8.0"
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: api
+      annotations:
+        configmap/checksum: f72e5cd4f233972a320d5f5eb83ba20a27edbfbc368beaae6ff3a396e18a5189
+        secret/checksum: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+    spec:
+      serviceAccount: kargo-api
+      containers:
+        - name: api
+          image: ghcr.io/akuity/kargo:v1.8.0
+          imagePullPolicy: IfNotPresent
+          command: ["/usr/local/bin/kargo", "api"]
+          env:
+          - name: GOMEMLIMIT
+            valueFrom:
+              resourceFieldRef:
+                containerName: api
+                divisor: "1"
+                resource: limits.memory
+          - name: GOMAXPROCS
+            valueFrom:
+              resourceFieldRef:
+                containerName: api
+                divisor: "1"
+                resource: limits.cpu
+          envFrom:
+          - configMapRef:
+              name: kargo-api
+          - secretRef:
+              name: kargo-api
+          ports:
+            - name: h2c
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            grpc:
+              port: 8080
+            initialDelaySeconds: 10
+          readinessProbe:
+            grpc:
+              port: 8080
+            initialDelaySeconds: 5
+          resources:
+            {}

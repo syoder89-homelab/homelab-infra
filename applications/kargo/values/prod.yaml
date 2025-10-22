@@ -4,3 +4,9 @@ kargo:
       type: LoadBalancer
     tls:
       enabled: false
+  externalWebhooksServer:
+    enabled: false
+    tls:
+      enabled: false
+  webhooksServer:
+    enabled: false

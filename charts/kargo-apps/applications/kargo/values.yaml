@@ -1,0 +1,4 @@
+kargo:
+  api:
+    secret:
+      name: kargo-api

@@ -1,0 +1,4 @@
+charts:
+{{- range $path, $_ := .Files.Glob "applications/*/Chart.yaml" }}
+  - {{ $path }}
+{{- end }}

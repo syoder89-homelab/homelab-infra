@@ -1,0 +1,14 @@
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: kargo-apps
+  namespace: homelab-infra
+spec:
+  subscriptions:
+  - git:
+      branch: main
+      commitSelectionStrategy: NewestFromBranch
+      discoveryLimit: 10
+      repoURL: https://github.com/syoder89/homelab-infra.git
+      includePaths:
+      - glob:applications/*/Chart.yaml

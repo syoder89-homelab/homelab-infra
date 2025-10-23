@@ -31,7 +31,7 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: api
       annotations:
-        configmap/checksum: f72e5cd4f233972a320d5f5eb83ba20a27edbfbc368beaae6ff3a396e18a5189
+        configmap/checksum: e79ee198659d04a448b8c377a9e1d30227797987273f744170c50ec4487262c6
         secret/checksum: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
     spec:
       serviceAccount: kargo-api
@@ -63,12 +63,35 @@ spec:
               containerPort: 8080
               protocol: TCP
           livenessProbe:
-            grpc:
-              port: 8080
+            exec:
+              command:
+                - /usr/local/bin/grpc_health_probe
+                - -addr=:8080
+                - -tls
+                - -tls-no-verify
             initialDelaySeconds: 10
           readinessProbe:
-            grpc:
-              port: 8080
+            exec:
+              command:
+                - /usr/local/bin/grpc_health_probe
+                - -addr=:8080
+                - -tls
+                - -tls-no-verify
             initialDelaySeconds: 5
+          volumeMounts:
+            - mountPath: /etc/kargo
+              name: config
+              readOnly: true
           resources:
             {}
+      volumes:
+        - name: config
+          projected:
+            sources:
+              - secret:
+                  name: kargo-api-cert
+                  items:
+                    - key: tls.crt
+                      path: tls.crt
+                    - key: tls.key
+                      path: tls.key

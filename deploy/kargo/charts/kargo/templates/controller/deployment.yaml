@@ -31,7 +31,7 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: controller
       annotations:
-        configmap/checksum: b0e53cd0f9db068d5a7b1b3fa88bdb9f58dc0c07d07b3c54d02d7f2de3c50dec
+        configmap/checksum: 69a8acc77eba01abe10849651dcec875f5e664cb87e7f0f6a50b205872382df1
     spec:
       serviceAccount: kargo-controller
       containers:

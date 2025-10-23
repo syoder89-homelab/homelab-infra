@@ -13,7 +13,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 data:
-  API_SERVER_BASE_URL: http://localhost
+  API_SERVER_BASE_URL: https://localhost
   LOG_LEVEL: "INFO"
   LOG_FORMAT: "CONSOLE"
   CLUSTER_SECRETS_NAMESPACE: kargo-cluster-secrets

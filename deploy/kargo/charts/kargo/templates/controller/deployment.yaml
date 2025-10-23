@@ -31,7 +31,7 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: controller
       annotations:
-        configmap/checksum: 69a8acc77eba01abe10849651dcec875f5e664cb87e7f0f6a50b205872382df1
+        configmap/checksum: 1493eb606cb490eaa6526fbd5d6b46cbdaef9356fc1ab072071f58b1a57b4228
     spec:
       serviceAccount: kargo-controller
       containers:
@@ -59,8 +59,15 @@ spec:
         volumeMounts:
         - mountPath: /tmp
           name: tmp-data
+        - mountPath: /etc/kargo/git
+          name: git
+          readOnly: true
         resources:
           {}
       volumes:
       - name: tmp-data
         emptyDir: {}
+      - name: git
+        secret:
+          secretName: kargo-github-signing-key
+          defaultMode: 0644

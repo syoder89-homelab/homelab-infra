@@ -1,13 +1,13 @@
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: kargo-apps-prod
+  name: application-generator-prod
   namespace: homelab-infra
 spec:
   requestedFreight:
   - origin:
       kind: Warehouse
-      name: kargo-apps
+      name: application-generator
     sources:
       direct: true
   promotionTemplate:
@@ -16,7 +16,7 @@ spec:
       - name: gitRepo
         value: https://github.com/syoder89-homelab/homelab-infra
       - name: targetBranch
-        value: env/prod/kargo-apps
+        value: env/prod/application-generator
       - name: path_src
         value: ./src
       - name: path_out
@@ -28,8 +28,8 @@ spec:
           name: prepare-workdir 
       - uses: helm-template
         config:
-          releaseName: kargo-apps
-          path: ${{ vars.path_src }}/charts/kargo-apps
+          releaseName: application-generator
+          path: ${{ vars.path_src }}/charts/application-generator
           outPath: ${{ vars.path_deploy }}
       - task:
           name: push-manifests

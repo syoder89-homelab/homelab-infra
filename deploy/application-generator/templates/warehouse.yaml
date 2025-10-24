@@ -5,8 +5,6 @@ kind: Warehouse
 metadata:
   name: argocd
   namespace: homelab-infra
-  annotations:
-    lastPromotionTime: '2025-10-24T20:36:36Z'
 spec:
   subscriptions:
   - git:
@@ -25,8 +23,6 @@ kind: Warehouse
 metadata:
   name: cert-manager
   namespace: homelab-infra
-  annotations:
-    lastPromotionTime: '2025-10-24T20:36:36Z'
 spec:
   subscriptions:
   - git:
@@ -45,8 +41,6 @@ kind: Warehouse
 metadata:
   name: kargo
   namespace: homelab-infra
-  annotations:
-    lastPromotionTime: '2025-10-24T20:36:36Z'
 spec:
   subscriptions:
   - git:

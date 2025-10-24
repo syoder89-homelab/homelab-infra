@@ -5,8 +5,6 @@ kind: Application
 metadata:
   name: prod-argocd
   namespace: argocd
-  annotations:
-    lastPromotionTime: '2025-10-24T20:36:36Z'
 spec:
   destination:
     name: in-cluster
@@ -31,8 +29,6 @@ kind: Application
 metadata:
   name: prod-cert-manager
   namespace: argocd
-  annotations:
-    lastPromotionTime: '2025-10-24T20:36:36Z'
 spec:
   destination:
     name: in-cluster
@@ -57,8 +53,6 @@ kind: Application
 metadata:
   name: prod-kargo
   namespace: argocd
-  annotations:
-    lastPromotionTime: '2025-10-24T20:36:36Z'
 spec:
   destination:
     name: in-cluster

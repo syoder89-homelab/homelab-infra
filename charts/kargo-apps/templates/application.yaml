@@ -15,7 +15,7 @@ spec:
     directory:
       recurse: true
     path: deploy/
-    repoURL: https://github.com/syoder89/homelab-infra.git
+    repoURL: https://github.com/syoder89-homelab/homelab-infra
     targetRevision: {{ $stage.targetBranch }}/{{ $app.name }}
   syncPolicy:
     automated:

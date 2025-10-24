@@ -1,6 +1,0 @@
-kargo:
-  api:
-    service:
-      type: LoadBalancer
-    tls:
-      enabled: false

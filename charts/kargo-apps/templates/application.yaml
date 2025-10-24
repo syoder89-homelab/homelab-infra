@@ -23,48 +23,5 @@ spec:
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
-
-apiVersion: kargo.akuity.io/v1alpha1
-kind: Stage
-metadata:
-  name: {{ $app.name }}-{{ $stage_name }}
-  namespace: homelab-infra
-spec:
-  requestedFreight:
-  - origin:
-      kind: Warehouse
-      name: {{ $app.name }}
-    sources:
-      {{ $stage.sources | toYaml }}
-  promotionTemplate:
-    spec:
-      vars:
-      - name: gitRepo
-        value: https://github.com/syoder89-homelab/homelab-infra
-      - name: targetBranch
-        value: {{ $stage.targetBranch }}/{{ $app.name }}
-      - name: path_src
-        value: ./src
-      - name: path_out
-        value: ./out
-      steps:
-      - task:
-          name: prepare-workdir 
-      - uses: helm-template
-        config:
-          releaseName: {{ $app.name }}
-          path: {{`${{ vars.path_src }}`}}/{{ dir $path }}
-          outPath: {{`${{ vars.path_out }}`}}/deploy/{{ $app.name }}
-          valuesFiles:
-          - {{`${{ vars.path_src }}`}}/{{ dir $path }}/values/{{ $stage_name }}.yaml
-          # Alternate config strategy
-          #- {{`${{ vars.path_src }}`}}/stages/{{ $stage_name }}/{{ $app.name }}-values.yaml
-      - task:
-          name: push-manifests
-        vars:
-        - name: asPR
-          value: "{{ $stage.asPR }}"
-        - name: targetBranch
-          value: {{ $stage.targetBranch }}/{{ $app.name }}
 {{- end }}
 {{- end }}

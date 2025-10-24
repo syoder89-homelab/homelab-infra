@@ -57,7 +57,7 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
 metadata:
-  name: 
+  name: mosquitto
   namespace: homelab-infra
 spec:
   subscriptions:
@@ -69,4 +69,4 @@ spec:
       includePaths:
       - applications/mosquitto
       # Alternate config strategy
-      #- stages/**/-values.yaml
+      #- stages/**/mosquitto-values.yaml

@@ -144,13 +144,13 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: prod-
+  name: prod-mosquitto
   namespace: homelab-infra
 spec:
   requestedFreight:
   - origin:
       kind: Warehouse
-      name: 
+      name: mosquitto
     sources:
       direct: true
   promotionTemplate:
@@ -159,7 +159,7 @@ spec:
       - name: gitRepo
         value: https://github.com/syoder89-homelab/homelab-infra
       - name: targetBranch
-        value: env/prod/
+        value: env/prod/mosquitto
       - name: path_src
         value: ./src
       - name: path_out
@@ -169,20 +169,20 @@ spec:
           name: prepare-workdir 
       - uses: helm-template
         config:
-          releaseName: 
-          namespace: 
+          releaseName: mosquitto
+          namespace: mosquitto
           buildDependencies: true
           includeCRDs: true
           path: ${{ vars.path_src }}/applications/mosquitto
-          outPath: ${{ vars.path_out }}/deploy/
+          outPath: ${{ vars.path_out }}/deploy/mosquitto
           valuesFiles:
           - ${{ vars.path_src }}/applications/mosquitto/values/prod.yaml
           # Alternate config strategy
-          #- ${{ vars.path_src }}/stages/prod/-values.yaml
+          #- ${{ vars.path_src }}/stages/prod/mosquitto-values.yaml
       - task:
           name: push-manifests
         vars:
         - name: asPR
           value: "true"
         - name: targetBranch
-          value: env/prod/
+          value: env/prod/mosquitto

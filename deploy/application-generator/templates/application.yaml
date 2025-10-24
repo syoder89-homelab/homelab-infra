@@ -75,19 +75,19 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: prod-
+  name: prod-mosquitto
   namespace: argocd
 spec:
   destination:
     name: in-cluster
-    namespace: 
+    namespace: mosquitto
   project: infra
   source:
     directory:
       recurse: true
     path: deploy/
     repoURL: https://github.com/syoder89-homelab/homelab-infra
-    targetRevision: env/prod/
+    targetRevision: env/prod/mosquitto
   syncPolicy:
     automated:
       prune: true

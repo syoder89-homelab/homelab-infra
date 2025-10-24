@@ -1,0 +1,36 @@
+---
+# Source: kargo-apps/templates/warehouse.yaml
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: argocd
+  namespace: homelab-infra
+spec:
+  subscriptions:
+  - git:
+      branch: main
+      commitSelectionStrategy: NewestFromBranch
+      discoveryLimit: 10
+      repoURL: https://github.com/syoder89-homelab/homelab-infra.git
+      includePaths:
+      - applications/argocd
+      # Alternate config strategy
+      #- stages/**/argocd-values.yaml
+---
+# Source: kargo-apps/templates/warehouse.yaml
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: kargo
+  namespace: homelab-infra
+spec:
+  subscriptions:
+  - git:
+      branch: main
+      commitSelectionStrategy: NewestFromBranch
+      discoveryLimit: 10
+      repoURL: https://github.com/syoder89-homelab/homelab-infra.git
+      includePaths:
+      - applications/kargo
+      # Alternate config strategy
+      #- stages/**/kargo-values.yaml

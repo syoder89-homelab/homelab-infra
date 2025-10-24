@@ -29,6 +29,9 @@ spec:
       - uses: helm-template
         config:
           releaseName: argocd
+          namespace: argocd
+          buildDependencies: true
+          includeCRDs: true
           path: ${{ vars.path_src }}/applications/argocd
           outPath: ${{ vars.path_out }}/deploy/argocd
           valuesFiles:
@@ -73,6 +76,9 @@ spec:
       - uses: helm-template
         config:
           releaseName: kargo
+          namespace: kargo
+          buildDependencies: true
+          includeCRDs: true
           path: ${{ vars.path_src }}/applications/kargo
           outPath: ${{ vars.path_out }}/deploy/kargo
           valuesFiles:

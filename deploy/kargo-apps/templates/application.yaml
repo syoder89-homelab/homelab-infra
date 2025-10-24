@@ -1,0 +1,132 @@
+---
+# Source: kargo-apps/templates/application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prod-argocd
+  namespace: argocd
+spec:
+  destination:
+    name: in-cluster
+  project: infra
+  source:
+    directory:
+      recurse: true
+    path: deploy/
+    repoURL: https://github.com/syoder89/homelab-infra.git
+    targetRevision: env/prod/argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: argocd-prod
+  namespace: homelab-infra
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: argocd
+    sources:
+      direct: true
+  promotionTemplate:
+    spec:
+      vars:
+      - name: gitRepo
+        value: https://github.com/syoder89-homelab/homelab-infra
+      - name: targetBranch
+        value: env/prod/argocd
+      - name: path_src
+        value: ./src
+      - name: path_out
+        value: ./out
+      steps:
+      - task:
+          name: prepare-workdir 
+      - uses: helm-template
+        config:
+          releaseName: argocd
+          path: ${{ vars.path_src }}/applications/argocd
+          outPath: ${{ vars.path_out }}/deploy/argocd
+          valuesFiles:
+          - ${{ vars.path_src }}/applications/argocd/values/prod.yaml
+          # Alternate config strategy
+          #- ${{ vars.path_src }}/stages/prod/argocd-values.yaml
+      - task:
+          name: push-manifests
+        vars:
+        - name: asPR
+          value: "true"
+        - name: targetBranch
+          value: env/prod/argocd
+---
+# Source: kargo-apps/templates/application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prod-kargo
+  namespace: argocd
+spec:
+  destination:
+    name: in-cluster
+  project: infra
+  source:
+    directory:
+      recurse: true
+    path: deploy/
+    repoURL: https://github.com/syoder89/homelab-infra.git
+    targetRevision: env/prod/kargo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: kargo-prod
+  namespace: homelab-infra
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: kargo
+    sources:
+      direct: true
+  promotionTemplate:
+    spec:
+      vars:
+      - name: gitRepo
+        value: https://github.com/syoder89-homelab/homelab-infra
+      - name: targetBranch
+        value: env/prod/kargo
+      - name: path_src
+        value: ./src
+      - name: path_out
+        value: ./out
+      steps:
+      - task:
+          name: prepare-workdir 
+      - uses: helm-template
+        config:
+          releaseName: kargo
+          path: ${{ vars.path_src }}/applications/kargo
+          outPath: ${{ vars.path_out }}/deploy/kargo
+          valuesFiles:
+          - ${{ vars.path_src }}/applications/kargo/values/prod.yaml
+          # Alternate config strategy
+          #- ${{ vars.path_src }}/stages/prod/kargo-values.yaml
+      - task:
+          name: push-manifests
+        vars:
+        - name: asPR
+          value: "true"
+        - name: targetBranch
+          value: env/prod/kargo

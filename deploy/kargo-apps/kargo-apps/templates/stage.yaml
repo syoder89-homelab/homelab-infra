@@ -1,0 +1,88 @@
+---
+# Source: kargo-apps/templates/stage.yaml
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: argocd-prod
+  namespace: homelab-infra
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: argocd
+    sources:
+      direct: true
+  promotionTemplate:
+    spec:
+      vars:
+      - name: gitRepo
+        value: https://github.com/syoder89/homelab-infra
+      - name: targetBranch
+        value: env/prod
+      - name: path_src
+        value: ./src
+      - name: path_out
+        value: ./out
+      steps:
+      - task:
+          name: prepare-workdir 
+      - uses: helm-template
+        config:
+          releaseName: argocd
+          path: ${{ vars.path_src }}/applications/argocd
+          outPath: ${{ vars.path_out }}/deploy/argocd
+          valuesFiles:
+          - ${{ vars.path_src }}/applications/argocd/values/prod.yaml
+          # Alternate config strategy
+          #- ${{ vars.path_src }}/stages/prod/argocd-values.yaml
+      - task:
+          name: push-manifests
+        vars:
+        - name: asPR
+          value: "true"
+        - name: targetBranch
+          value: env/prod
+---
+# Source: kargo-apps/templates/stage.yaml
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: kargo-prod
+  namespace: homelab-infra
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: kargo
+    sources:
+      direct: true
+  promotionTemplate:
+    spec:
+      vars:
+      - name: gitRepo
+        value: https://github.com/syoder89/homelab-infra
+      - name: targetBranch
+        value: env/prod
+      - name: path_src
+        value: ./src
+      - name: path_out
+        value: ./out
+      steps:
+      - task:
+          name: prepare-workdir 
+      - uses: helm-template
+        config:
+          releaseName: kargo
+          path: ${{ vars.path_src }}/applications/kargo
+          outPath: ${{ vars.path_out }}/deploy/kargo
+          valuesFiles:
+          - ${{ vars.path_src }}/applications/kargo/values/prod.yaml
+          # Alternate config strategy
+          #- ${{ vars.path_src }}/stages/prod/kargo-values.yaml
+      - task:
+          name: push-manifests
+        vars:
+        - name: asPR
+          value: "true"
+        - name: targetBranch
+          value: env/prod

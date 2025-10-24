@@ -10,7 +10,7 @@ metadata:
 spec:
   destination:
     name: in-cluster
-    namespace: {{ $app.name }}
+    namespace: {{ $app.namespace | default $app.name }}
   project: infra
   source:
     directory:

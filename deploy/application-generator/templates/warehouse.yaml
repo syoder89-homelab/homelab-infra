@@ -57,6 +57,24 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
 metadata:
+  name: mosquitto-taylor
+  namespace: homelab-infra
+spec:
+  subscriptions:
+  - git:
+      branch: main
+      commitSelectionStrategy: NewestFromBranch
+      discoveryLimit: 10
+      repoURL: https://github.com/syoder89-homelab/homelab-infra.git
+      includePaths:
+      - applications/mosquitto-taylor
+      # Alternate config strategy
+      #- stages/**/mosquitto-taylor-values.yaml
+---
+# Source: application-generator/templates/warehouse.yaml
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
   name: mosquitto
   namespace: homelab-infra
 spec:

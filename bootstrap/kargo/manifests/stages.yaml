@@ -26,10 +26,11 @@ spec:
       steps:
       - task:
           name: prepare-workdir 
+      # Copy application manifests into application-generator chart
       - uses: copy
         config:
           inPath: ${{ vars.path_src }}/applications
-          outPath: ${{ vars.pth_src }}/charts/application-generator/applications
+          outPath: ${{ vars.path_src }}/charts/application-generator/applications
       - uses: helm-template
         config:
           releaseName: application-generator

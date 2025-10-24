@@ -80,7 +80,7 @@ metadata:
 spec:
   destination:
     name: in-cluster
-    namespace: mosquitto-taylor
+    namespace: taylor-monitoring
   project: infra
   source:
     directory:

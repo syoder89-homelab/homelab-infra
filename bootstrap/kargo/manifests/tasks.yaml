@@ -71,7 +71,7 @@ spec:
         generateTargetBranch: true
     - uses: git-open-pr
       as: open-pr
-      if: ${{ vars.asPR == "true" }}
+      if: ${{ vars.asPR == "true" && status("commit") == 'Succeeded' }}
       config:
         repoURL: ${{ vars.gitRepo }}
         createTargetBranch: true
@@ -79,7 +79,7 @@ spec:
         targetBranch: ${{ vars.targetBranch }}
     - uses: git-wait-for-pr
       as: wait-for-pr
-      if: ${{ vars.asPR == "true" }}
+      if: ${{ vars.asPR == "true" && status("commit") == 'Succeeded' }}
       config:
         repoURL: ${{ vars.gitRepo }}
         prNumber: ${{ task.outputs['open-pr'].pr.id }}

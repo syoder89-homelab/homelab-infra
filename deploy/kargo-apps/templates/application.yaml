@@ -13,7 +13,7 @@ spec:
     directory:
       recurse: true
     path: deploy/
-    repoURL: https://github.com/syoder89/homelab-infra.git
+    repoURL: https://github.com/syoder89-homelab/homelab-infra
     targetRevision: env/prod/argocd
   syncPolicy:
     automated:
@@ -36,7 +36,7 @@ spec:
     directory:
       recurse: true
     path: deploy/
-    repoURL: https://github.com/syoder89/homelab-infra.git
+    repoURL: https://github.com/syoder89-homelab/homelab-infra
     targetRevision: env/prod/kargo
   syncPolicy:
     automated:

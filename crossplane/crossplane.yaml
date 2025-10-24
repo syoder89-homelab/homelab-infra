@@ -4,7 +4,7 @@ metadata:
   name: infra
   annotations:
     meta.crossplane.io/maintainer: Scott Yoder <syoder89@gmail.com>
-    meta.crossplane.io/source: github.com/syoder89/crossplane/infra
+    meta.crossplane.io/source: github.com/syoder89-homelab/crossplane/infra
     meta.crossplane.io/license: Apache-2.0
 spec:
   crossplane:

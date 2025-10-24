@@ -15,6 +15,8 @@ spec:
     value: ./src
   - name: path_out
     value: ./out
+  - name: path_out
+    value: ${{ path_out }}/out
   # Sequence of promotion steps
   steps:
     - uses: git-clone

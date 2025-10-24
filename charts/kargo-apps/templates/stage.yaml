@@ -18,9 +18,9 @@ spec:
     spec:
       vars:
       - name: gitRepo
-        value: https://github.com/syoder89/homelab-infra
+        value: https://github.com/syoder89-homelab/homelab-infra
       - name: targetBranch
-        value: {{ $stage.targetBranch }}
+        value: {{ $stage.targetBranch }}/{{ $app.name }}
       - name: path_src
         value: ./src
       - name: path_out
@@ -43,6 +43,6 @@ spec:
         - name: asPR
           value: "{{ $stage.asPR }}"
         - name: targetBranch
-          value: {{ $stage.targetBranch }}
+          value: {{ $stage.targetBranch }}/{{ $app.name }}
 {{- end }}
 {{- end }}

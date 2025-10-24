@@ -19,4 +19,4 @@ spec:
   - group: '*'
     kind: '*'
   sourceRepos:
-  - https://github.com/syoder89/homelab-infra.git
+  - https://github.com/syoder89-homelab/homelab-infra.git

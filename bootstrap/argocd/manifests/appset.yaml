@@ -1,19 +1,29 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: infra
+  name: infra-new
   namespace: argocd
 spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
   generators:
-  - git:
-      repoURL: https://github.com/syoder89/homelab-infra.git
-      revision: env/prod
-      directories:
-      # deploy/appname
-      - path: deploy/*
+#  - git:
+#      repoURL: https://github.com/syoder89-homelab/homelab-infra.git
+#      revision: env/prod
+#      directories:
+#      # deploy/appname
+#      - path: deploy/*
+    - scmProvider:
+        github:
+          organization: syoder89-homelab
+          allBranches: true # Scan all branches
+        filters:
+          - branchMatch: "env/prod/*"
+            repositoryMatch: "homelab-*"
+            pathsExist: [deploy]
   template:
     metadata:
-      name: infra-{{path.basenameNormalized}}
+      name: '{{ .repository }}-{{ .branchNormalized }}'
       annotations:
         #kargo.akuity.io/authorized-stage: kargo-infra:{{path.basename}}
     spec:
@@ -23,9 +33,9 @@ spec:
       source:
         directory:
           recurse: true
-        path: "deploy/{{path.basename}}"
-        repoURL: https://github.com/syoder89/homelab-infra.git
-        targetRevision: env/prod
+        path: "deploy/"
+        repoURL: '{{ .url }}'
+        targetRevision: '{{ .branch }}'
       syncPolicy:
         automated:
           prune: true

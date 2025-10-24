@@ -14,13 +14,15 @@ spec:
     spec:
       vars:
       - name: gitRepo
-        value: https://github.com/syoder89/homelab-infra
+        value: https://github.com/syoder89-homelab/homelab-infra
       - name: targetBranch
-        value: env/prod
+        value: env/prod/kargo-apps
       - name: path_src
         value: ./src
       - name: path_out
         value: ./out
+      - name: path_deploy
+        value: ${{ vars.path_out }}/deploy
       steps:
       - task:
           name: prepare-workdir 
@@ -28,11 +30,9 @@ spec:
         config:
           releaseName: kargo-apps
           path: ${{ vars.path_src }}/charts/kargo-apps
-          outPath: ${{ vars.path_out }}/deploy/kargo
+          outPath: ${{ vars.path_deploy }}
       - task:
           name: push-manifests
         vars:
         - name: asPR
           value: "true"
-        - name: targetBranch
-          value: env/prod

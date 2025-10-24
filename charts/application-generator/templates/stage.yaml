@@ -5,8 +5,10 @@
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: {{ $app.name }}-{{ $stage_name }}
+  name: {{ $stage_name }}-{{ $app.name }}
   namespace: homelab-infra
+  annotations:
+    lastPromotionTime: '{{ now | date "2006-01-02T15:04:05Z07:00" }}'
 spec:
   requestedFreight:
   - origin:

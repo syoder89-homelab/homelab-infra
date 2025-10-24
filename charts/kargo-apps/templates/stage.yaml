@@ -31,6 +31,9 @@ spec:
       - uses: helm-template
         config:
           releaseName: {{ $app.name }}
+          namespace: {{ $app.name }}
+          buildDependencies: true
+          includeCRDs: true
           path: {{`${{ vars.path_src }}`}}/{{ dir $path }}
           outPath: {{`${{ vars.path_out }}`}}/deploy/{{ $app.name }}
           valuesFiles:

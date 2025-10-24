@@ -6,7 +6,7 @@ metadata:
   name: prod-argocd
   namespace: homelab-infra
   annotations:
-    lastPromotionTime: '2025-10-24T20:36:36Z'
+    lastPromotionTime: '2025-10-24T21:19:00Z'
 spec:
   requestedFreight:
   - origin:
@@ -55,7 +55,7 @@ metadata:
   name: prod-cert-manager
   namespace: homelab-infra
   annotations:
-    lastPromotionTime: '2025-10-24T20:36:36Z'
+    lastPromotionTime: '2025-10-24T21:19:00Z'
 spec:
   requestedFreight:
   - origin:
@@ -104,7 +104,7 @@ metadata:
   name: prod-kargo
   namespace: homelab-infra
   annotations:
-    lastPromotionTime: '2025-10-24T20:36:36Z'
+    lastPromotionTime: '2025-10-24T21:19:00Z'
 spec:
   requestedFreight:
   - origin:

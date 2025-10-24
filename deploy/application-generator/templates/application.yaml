@@ -6,7 +6,7 @@ metadata:
   name: prod-argocd
   namespace: argocd
   annotations:
-    lastPromotionTime: '2025-10-24T20:36:36Z'
+    lastPromotionTime: '2025-10-24T21:19:00Z'
 spec:
   destination:
     name: in-cluster
@@ -32,7 +32,7 @@ metadata:
   name: prod-cert-manager
   namespace: argocd
   annotations:
-    lastPromotionTime: '2025-10-24T20:36:36Z'
+    lastPromotionTime: '2025-10-24T21:19:00Z'
 spec:
   destination:
     name: in-cluster
@@ -58,7 +58,7 @@ metadata:
   name: prod-kargo
   namespace: argocd
   annotations:
-    lastPromotionTime: '2025-10-24T20:36:36Z'
+    lastPromotionTime: '2025-10-24T21:19:00Z'
 spec:
   destination:
     name: in-cluster

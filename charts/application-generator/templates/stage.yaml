@@ -7,8 +7,6 @@ kind: Stage
 metadata:
   name: {{ $stage_name }}-{{ $app.name }}
   namespace: homelab-infra
-  annotations:
-    lastPromotionTime: '{{ now | date "2006-01-02T15:04:05Z07:00" }}'
 spec:
   requestedFreight:
   - origin:

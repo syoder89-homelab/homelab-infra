@@ -7,8 +7,6 @@ kind: Application
 metadata:
   name: {{ $stage_name }}-{{ $app.name }}
   namespace: argocd
-  annotations:
-    lastPromotionTime: '{{ now | date "2006-01-02T15:04:05Z07:00" }}'
 spec:
   destination:
     name: in-cluster

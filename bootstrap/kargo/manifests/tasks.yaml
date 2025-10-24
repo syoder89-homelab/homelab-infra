@@ -59,13 +59,13 @@ spec:
         path: ${{ vars.path_out }}
         message: "Update Kargo Applications to ${{ ctx.stage }} [skip ci]"
     - uses: git-push
-      if: ${{ vars.asPR != "true" }}
+      if: ${{ vars.asPR != "true" && status("commit") == 'Succeeded' }}
       config:
         path: ${{ vars.path_out }}
         targetBranch: ${{ vars.targetBranch }}
     - uses: git-push
       as: push
-      if: ${{ vars.asPR == "true" }}
+      if: ${{ vars.asPR == "true" && status("commit") == 'Succeeded' }}
       config:
         path: ${{ vars.path_out }}
         generateTargetBranch: true

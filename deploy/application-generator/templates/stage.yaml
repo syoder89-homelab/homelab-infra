@@ -3,8 +3,10 @@
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: argocd-prod
+  name: prod-argocd
   namespace: homelab-infra
+  annotations:
+    lastPromotionTime: '2025-10-24T20:36:36Z'
 spec:
   requestedFreight:
   - origin:
@@ -50,8 +52,10 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: cert-manager-prod
+  name: prod-cert-manager
   namespace: homelab-infra
+  annotations:
+    lastPromotionTime: '2025-10-24T20:36:36Z'
 spec:
   requestedFreight:
   - origin:
@@ -97,8 +101,10 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: kargo-prod
+  name: prod-kargo
   namespace: homelab-infra
+  annotations:
+    lastPromotionTime: '2025-10-24T20:36:36Z'
 spec:
   requestedFreight:
   - origin:

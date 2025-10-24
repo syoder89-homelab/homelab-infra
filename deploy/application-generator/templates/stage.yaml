@@ -5,8 +5,6 @@ kind: Stage
 metadata:
   name: prod-argocd
   namespace: homelab-infra
-  annotations:
-    lastPromotionTime: '2025-10-24T20:36:36Z'
 spec:
   requestedFreight:
   - origin:
@@ -54,8 +52,6 @@ kind: Stage
 metadata:
   name: prod-cert-manager
   namespace: homelab-infra
-  annotations:
-    lastPromotionTime: '2025-10-24T20:36:36Z'
 spec:
   requestedFreight:
   - origin:
@@ -103,8 +99,6 @@ kind: Stage
 metadata:
   name: prod-kargo
   namespace: homelab-infra
-  annotations:
-    lastPromotionTime: '2025-10-24T20:36:36Z'
 spec:
   requestedFreight:
   - origin:

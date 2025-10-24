@@ -40,4 +40,4 @@ spec:
           name: push-manifests
         vars:
         - name: asPR
-          value: "true"
+          value: "false"

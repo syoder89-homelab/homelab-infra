@@ -6,3 +6,4 @@ stages:
       # - staging
     asPR: true
     targetBranch: env/prod
+    envType: prod

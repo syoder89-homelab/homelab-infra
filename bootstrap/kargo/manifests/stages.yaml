@@ -21,11 +21,10 @@ spec:
         value: ./src
       - name: path_out
         value: ./out
-      - name: path_deploy
-        value: ${{ vars.path_out }}/deploy
       steps:
       - task:
           name: prepare-workdir 
+      # The application-generator chart needs access to the application manifests
       # Copy application manifests into application-generator chart
       - uses: copy
         config:
@@ -35,7 +34,7 @@ spec:
         config:
           releaseName: application-generator
           path: ${{ vars.path_src }}/charts/application-generator
-          outPath: ${{ vars.path_deploy }}
+          outPath: ${{ vars.path_out }}/deploy
       - task:
           name: push-manifests
         vars:

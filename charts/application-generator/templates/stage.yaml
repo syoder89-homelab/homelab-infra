@@ -32,17 +32,17 @@ spec:
       # Copy config manifests into config-generator chart
       - uses: copy
         config:
-          inPath: ${{ vars.path_src }}/config
-          outPath: ${{ vars.path_src }}/charts/config-generator/config/platform
+          inPath: {{`${{ vars.path_src }}`}}/config
+          outPath: {{`${{ vars.path_src }}`}}/charts/config-generator/config/platform
       - uses: copy
         config:
-          inPath: ${{ vars.path_src }}/{{ dir $path }}/config
-          outPath: ${{ vars.path_src }}/charts/config-generator/config/application
+          inPath: {{`${{ vars.path_src }}`}}/{{ dir $path }}/config
+          outPath: {{`${{ vars.path_src }}`}}/charts/config-generator/config/application
       # Render the config files from templates
       - uses: helm-template
         config:
           releaseName: config-generator
-          path: ${{ vars.path_src }}/charts/config-generator
+          path: {{`${{ vars.path_src }}`}}/charts/config-generator
           outLayout: flat
           outPath: /tmp/values.yaml
           setValues:

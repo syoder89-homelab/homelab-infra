@@ -1,4 +1,0 @@
-mosquitto:
-  service:
-    main:
-      type: LoadBalancer 

@@ -358,3 +358,75 @@ spec:
           value: "true"
         - name: targetBranch
           value: env/prod/mosquitto
+---
+# Source: application-generator/templates/stage.yaml
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: prod-onepassword-connect
+  namespace: homelab-infra
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: onepassword-connect
+    sources:
+      direct: true
+  promotionTemplate:
+    spec:
+      vars:
+      - name: gitRepo
+        value: https://github.com/syoder89-homelab/homelab-infra
+      - name: targetBranch
+        value: env/prod/onepassword-connect
+      - name: path_src
+        value: ./src
+      - name: path_out
+        value: ./out
+      steps:
+      - task:
+          name: prepare-workdir 
+      # The config-generator chart needs access to the config manifests
+      # Copy config manifests into config-generator chart
+      - uses: copy
+        config:
+          inPath: ${{ vars.path_src }}/config
+          outPath: ${{ vars.path_src }}/charts/config-generator/config/platform
+      - uses: copy
+        config:
+          inPath: ${{ vars.path_src }}/applications/onepassword-connect/config
+          outPath: ${{ vars.path_src }}/charts/config-generator/config/application
+      # Render the config files from templates
+      - uses: helm-template
+        config:
+          releaseName: config-generator
+          path: ${{ vars.path_src }}/charts/config-generator
+          outLayout: flat
+          outPath: /tmp/values.yaml
+          setValues:
+            - key: stageName
+              value: prod
+            - key: envType
+              value: prod
+            - key: appName
+              value: onepassword-connect
+          #valuesFiles:
+          #- ${{ vars.path_src }}/config/prod/onepassword-connect-values.yaml
+          #- ${{ vars.path_src }}/applications/onepassword-connect/values/prod.yaml
+      - uses: helm-template
+        config:
+          releaseName: onepassword-connect
+          namespace: onepassword-connect
+          buildDependencies: true
+          includeCRDs: true
+          path: ${{ vars.path_src }}/applications/onepassword-connect
+          outPath: ${{ vars.path_out }}/deploy/onepassword-connect
+          valuesFiles:
+          - /tmp/values.yaml
+      - task:
+          name: push-manifests
+        vars:
+        - name: asPR
+          value: "true"
+        - name: targetBranch
+          value: env/prod/onepassword-connect

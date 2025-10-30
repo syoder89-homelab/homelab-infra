@@ -75,54 +75,6 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: prod-mosquitto-taylor
-  namespace: argocd
-spec:
-  destination:
-    name: in-cluster
-    namespace: taylor-monitoring
-  project: infra
-  source:
-    directory:
-      recurse: true
-    path: deploy/
-    repoURL: https://github.com/syoder89-homelab/homelab-infra
-    targetRevision: env/prod/mosquitto-taylor
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-    - CreateNamespace=true
----
-# Source: application-generator/templates/application.yaml
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: prod-mosquitto
-  namespace: argocd
-spec:
-  destination:
-    name: in-cluster
-    namespace: mosquitto
-  project: infra
-  source:
-    directory:
-      recurse: true
-    path: deploy/
-    repoURL: https://github.com/syoder89-homelab/homelab-infra
-    targetRevision: env/prod/mosquitto
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-    - CreateNamespace=true
----
-# Source: application-generator/templates/application.yaml
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
   name: prod-onepassword-connect
   namespace: argocd
 spec:

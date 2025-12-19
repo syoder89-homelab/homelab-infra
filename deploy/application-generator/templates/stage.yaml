@@ -178,7 +178,7 @@ spec:
           outPath: ${{ vars.path_src }}/charts/config-generator/config/platform
       - uses: copy
         config:
-          inPath: ${{ vars.path_src }}/applications/kargo-config/config
+          inPath: ${{ vars.path_src }}/applications/kargo-config-infra/config
           outPath: ${{ vars.path_src }}/charts/config-generator/config/application
       # Render the config files from templates
       - uses: helm-template
@@ -196,14 +196,14 @@ spec:
               value: kargo-config
           #valuesFiles:
           #- ${{ vars.path_src }}/config/prod/kargo-config-values.yaml
-          #- ${{ vars.path_src }}/applications/kargo-config/values/prod.yaml
+          #- ${{ vars.path_src }}/applications/kargo-config-infra/values/prod.yaml
       - uses: helm-template
         config:
           releaseName: kargo-config
           namespace: homelab-infra
           buildDependencies: true
           includeCRDs: true
-          path: ${{ vars.path_src }}/applications/kargo-config
+          path: ${{ vars.path_src }}/applications/kargo-config-infra
           outPath: ${{ vars.path_out }}/deploy/kargo-config
           valuesFiles:
           - /tmp/values.yaml

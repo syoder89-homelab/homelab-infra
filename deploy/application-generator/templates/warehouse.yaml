@@ -49,7 +49,7 @@ spec:
       discoveryLimit: 10
       repoURL: https://github.com/syoder89-homelab/homelab-infra.git
       includePaths:
-      - applications/kargo-config
+      - applications/kargo-config-infra
       # Alternate config strategy
       #- stages/**/kargo-config-values.yaml
 ---

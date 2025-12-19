@@ -5,10 +5,10 @@ kind: ClusterRoleBinding
 metadata:
   name: kargo-webhooks-server
   labels:
-    helm.sh/chart: kargo-1.8.0
+    helm.sh/chart: kargo-1.8.4
     app.kubernetes.io/name: kargo
     app.kubernetes.io/instance: kargo
-    app.kubernetes.io/version: "v1.8.0"
+    app.kubernetes.io/version: "v1.8.4"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: kubernetes-webhooks-server
 roleRef:
@@ -26,10 +26,10 @@ kind: ClusterRoleBinding
 metadata:
   name: kargo-webhooks-server-ns-controller
   labels:
-    helm.sh/chart: kargo-1.8.0
+    helm.sh/chart: kargo-1.8.4
     app.kubernetes.io/name: kargo
     app.kubernetes.io/instance: kargo
-    app.kubernetes.io/version: "v1.8.0"
+    app.kubernetes.io/version: "v1.8.4"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: kubernetes-webhooks-server
 roleRef:
@@ -47,10 +47,10 @@ kind: ClusterRoleBinding
 metadata:
   name: kargo-webhooks-server-generic-gc
   labels:
-    helm.sh/chart: kargo-1.8.0
+    helm.sh/chart: kargo-1.8.4
     app.kubernetes.io/name: kargo
     app.kubernetes.io/instance: kargo
-    app.kubernetes.io/version: "v1.8.0"
+    app.kubernetes.io/version: "v1.8.4"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: kubernetes-webhooks-server
 roleRef:

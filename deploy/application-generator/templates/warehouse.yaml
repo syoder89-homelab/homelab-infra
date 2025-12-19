@@ -39,7 +39,7 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
 metadata:
-  name: kargo-config
+  name: kargo-config-infra
   namespace: homelab-infra
 spec:
   subscriptions:
@@ -51,7 +51,7 @@ spec:
       includePaths:
       - applications/kargo-config-infra
       # Alternate config strategy
-      #- stages/**/kargo-config-values.yaml
+      #- stages/**/kargo-config-infra-values.yaml
 ---
 # Source: application-generator/templates/warehouse.yaml
 apiVersion: kargo.akuity.io/v1alpha1

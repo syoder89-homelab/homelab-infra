@@ -51,7 +51,7 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: prod-kargo-config
+  name: prod-kargo-config-infra
   namespace: argocd
 spec:
   destination:
@@ -63,7 +63,7 @@ spec:
       recurse: true
     path: deploy/
     repoURL: https://github.com/syoder89-homelab/homelab-infra
-    targetRevision: env/prod/kargo-config
+    targetRevision: env/prod/kargo-config-infra
   syncPolicy:
     automated:
       prune: true

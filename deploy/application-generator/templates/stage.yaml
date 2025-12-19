@@ -147,13 +147,13 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
-  name: prod-kargo-config
+  name: prod-kargo-config-infra
   namespace: homelab-infra
 spec:
   requestedFreight:
   - origin:
       kind: Warehouse
-      name: kargo-config
+      name: kargo-config-infra
     sources:
       direct: true
   promotionTemplate:
@@ -162,7 +162,7 @@ spec:
       - name: gitRepo
         value: https://github.com/syoder89-homelab/homelab-infra
       - name: targetBranch
-        value: env/prod/kargo-config
+        value: env/prod/kargo-config-infra
       - name: path_src
         value: ./src
       - name: path_out
@@ -193,18 +193,18 @@ spec:
             - key: envType
               value: prod
             - key: appName
-              value: kargo-config
+              value: kargo-config-infra
           #valuesFiles:
-          #- ${{ vars.path_src }}/config/prod/kargo-config-values.yaml
+          #- ${{ vars.path_src }}/config/prod/kargo-config-infra-values.yaml
           #- ${{ vars.path_src }}/applications/kargo-config-infra/values/prod.yaml
       - uses: helm-template
         config:
-          releaseName: kargo-config
+          releaseName: kargo-config-infra
           namespace: homelab-infra
           buildDependencies: true
           includeCRDs: true
           path: ${{ vars.path_src }}/applications/kargo-config-infra
-          outPath: ${{ vars.path_out }}/deploy/kargo-config
+          outPath: ${{ vars.path_out }}/deploy/kargo-config-infra
           valuesFiles:
           - /tmp/values.yaml
       - task:
@@ -213,7 +213,7 @@ spec:
         - name: asPR
           value: "true"
         - name: targetBranch
-          value: env/prod/kargo-config
+          value: env/prod/kargo-config-infra
 ---
 # Source: application-generator/templates/stage.yaml
 apiVersion: kargo.akuity.io/v1alpha1

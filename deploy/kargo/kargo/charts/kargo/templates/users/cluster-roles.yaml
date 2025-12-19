@@ -5,10 +5,10 @@ kind: ClusterRole
 metadata:
   name: kargo-admin
   labels:
-    helm.sh/chart: kargo-1.8.0
+    helm.sh/chart: kargo-1.8.4
     app.kubernetes.io/name: kargo
     app.kubernetes.io/instance: kargo
-    app.kubernetes.io/version: "v1.8.0"
+    app.kubernetes.io/version: "v1.8.4"
     app.kubernetes.io/managed-by: Helm
 rules:
 - apiGroups:
@@ -95,10 +95,10 @@ kind: ClusterRole
 metadata:
   name: kargo-project-creator
   labels:
-    helm.sh/chart: kargo-1.8.0
+    helm.sh/chart: kargo-1.8.4
     app.kubernetes.io/name: kargo
     app.kubernetes.io/instance: kargo
-    app.kubernetes.io/version: "v1.8.0"
+    app.kubernetes.io/version: "v1.8.4"
     app.kubernetes.io/managed-by: Helm
 rules:
 - apiGroups:
@@ -142,10 +142,10 @@ kind: ClusterRole
 metadata:
   name: kargo-user
   labels:
-    helm.sh/chart: kargo-1.8.0
+    helm.sh/chart: kargo-1.8.4
     app.kubernetes.io/name: kargo
     app.kubernetes.io/instance: kargo
-    app.kubernetes.io/version: "v1.8.0"
+    app.kubernetes.io/version: "v1.8.4"
     app.kubernetes.io/managed-by: Helm
 rules:
 - apiGroups:
@@ -181,10 +181,10 @@ kind: ClusterRole
 metadata:
   name: kargo-viewer
   labels:
-    helm.sh/chart: kargo-1.8.0
+    helm.sh/chart: kargo-1.8.4
     app.kubernetes.io/name: kargo
     app.kubernetes.io/instance: kargo
-    app.kubernetes.io/version: "v1.8.0"
+    app.kubernetes.io/version: "v1.8.4"
     app.kubernetes.io/managed-by: Helm
 rules:
 - apiGroups:

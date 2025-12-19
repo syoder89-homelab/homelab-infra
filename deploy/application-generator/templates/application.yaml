@@ -51,6 +51,30 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
+  name: prod-kargo-config
+  namespace: argocd
+spec:
+  destination:
+    name: in-cluster
+    namespace: homelab-infra
+  project: infra
+  source:
+    directory:
+      recurse: true
+    path: deploy/
+    repoURL: https://github.com/syoder89-homelab/homelab-infra
+    targetRevision: env/prod/kargo-config
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+---
+# Source: application-generator/templates/application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
   name: prod-kargo
   namespace: argocd
 spec:

@@ -39,6 +39,24 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
 metadata:
+  name: kargo-config
+  namespace: homelab-infra
+spec:
+  subscriptions:
+  - git:
+      branch: main
+      commitSelectionStrategy: NewestFromBranch
+      discoveryLimit: 10
+      repoURL: https://github.com/syoder89-homelab/homelab-infra.git
+      includePaths:
+      - applications/kargo-config
+      # Alternate config strategy
+      #- stages/**/kargo-config-values.yaml
+---
+# Source: application-generator/templates/warehouse.yaml
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
   name: kargo
   namespace: homelab-infra
 spec:

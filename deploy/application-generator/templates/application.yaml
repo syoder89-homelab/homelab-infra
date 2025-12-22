@@ -6,7 +6,7 @@ metadata:
   name: prod-argocd
   namespace: argocd
   annotations:
-    kargo.akuity.io/authorized-stage: prod-argocd
+    kargo.akuity.io/authorized-stage: homelab-infra:prod-argocd
 spec:
   destination:
     name: in-cluster
@@ -32,7 +32,7 @@ metadata:
   name: prod-cert-manager
   namespace: argocd
   annotations:
-    kargo.akuity.io/authorized-stage: prod-cert-manager
+    kargo.akuity.io/authorized-stage: homelab-infra:prod-cert-manager
 spec:
   destination:
     name: in-cluster
@@ -58,7 +58,7 @@ metadata:
   name: prod-kargo-config-infra
   namespace: argocd
   annotations:
-    kargo.akuity.io/authorized-stage: prod-kargo-config-infra
+    kargo.akuity.io/authorized-stage: homelab-infra:prod-kargo-config-infra
 spec:
   destination:
     name: in-cluster
@@ -84,7 +84,7 @@ metadata:
   name: prod-kargo
   namespace: argocd
   annotations:
-    kargo.akuity.io/authorized-stage: prod-kargo
+    kargo.akuity.io/authorized-stage: homelab-infra:prod-kargo
 spec:
   destination:
     name: in-cluster
@@ -110,7 +110,7 @@ metadata:
   name: prod-onepassword-connect
   namespace: argocd
   annotations:
-    kargo.akuity.io/authorized-stage: prod-onepassword-connect
+    kargo.akuity.io/authorized-stage: homelab-infra:prod-onepassword-connect
 spec:
   destination:
     name: in-cluster

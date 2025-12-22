@@ -65,11 +65,19 @@ spec:
           - /tmp/values.yaml
       - task:
           name: push-manifests
+        as: promotion
         vars:
         - name: asPR
           value: "true"
         - name: targetBranch
           value: env/prod/argocd
+      - uses: argocd-update
+        config:
+          apps:
+          - name: prod-argocd
+            sources:
+            - repoURL: ${{ vars.gitRepo }}
+              desiredRevision: ${{ outputs.promotion.commit }}
 ---
 # Source: application-generator/templates/stage.yaml
 apiVersion: kargo.akuity.io/v1alpha1
@@ -137,11 +145,19 @@ spec:
           - /tmp/values.yaml
       - task:
           name: push-manifests
+        as: promotion
         vars:
         - name: asPR
           value: "true"
         - name: targetBranch
           value: env/prod/cert-manager
+      - uses: argocd-update
+        config:
+          apps:
+          - name: prod-cert-manager
+            sources:
+            - repoURL: ${{ vars.gitRepo }}
+              desiredRevision: ${{ outputs.promotion.commit }}
 ---
 # Source: application-generator/templates/stage.yaml
 apiVersion: kargo.akuity.io/v1alpha1
@@ -209,11 +225,19 @@ spec:
           - /tmp/values.yaml
       - task:
           name: push-manifests
+        as: promotion
         vars:
         - name: asPR
           value: "true"
         - name: targetBranch
           value: env/prod/kargo-config-infra
+      - uses: argocd-update
+        config:
+          apps:
+          - name: prod-kargo-config-infra
+            sources:
+            - repoURL: ${{ vars.gitRepo }}
+              desiredRevision: ${{ outputs.promotion.commit }}
 ---
 # Source: application-generator/templates/stage.yaml
 apiVersion: kargo.akuity.io/v1alpha1
@@ -281,11 +305,19 @@ spec:
           - /tmp/values.yaml
       - task:
           name: push-manifests
+        as: promotion
         vars:
         - name: asPR
           value: "true"
         - name: targetBranch
           value: env/prod/kargo
+      - uses: argocd-update
+        config:
+          apps:
+          - name: prod-kargo
+            sources:
+            - repoURL: ${{ vars.gitRepo }}
+              desiredRevision: ${{ outputs.promotion.commit }}
 ---
 # Source: application-generator/templates/stage.yaml
 apiVersion: kargo.akuity.io/v1alpha1
@@ -353,8 +385,16 @@ spec:
           - /tmp/values.yaml
       - task:
           name: push-manifests
+        as: promotion
         vars:
         - name: asPR
           value: "true"
         - name: targetBranch
           value: env/prod/onepassword-connect
+      - uses: argocd-update
+        config:
+          apps:
+          - name: prod-onepassword-connect
+            sources:
+            - repoURL: ${{ vars.gitRepo }}
+              desiredRevision: ${{ outputs.promotion.commit }}

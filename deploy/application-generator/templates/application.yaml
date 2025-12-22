@@ -5,6 +5,8 @@ kind: Application
 metadata:
   name: prod-argocd
   namespace: argocd
+  annotations:
+    kargo.akuity.io/authorized-stage: prod-argocd
 spec:
   destination:
     name: in-cluster
@@ -29,6 +31,8 @@ kind: Application
 metadata:
   name: prod-cert-manager
   namespace: argocd
+  annotations:
+    kargo.akuity.io/authorized-stage: prod-cert-manager
 spec:
   destination:
     name: in-cluster
@@ -53,6 +57,8 @@ kind: Application
 metadata:
   name: prod-kargo-config-infra
   namespace: argocd
+  annotations:
+    kargo.akuity.io/authorized-stage: prod-kargo-config-infra
 spec:
   destination:
     name: in-cluster
@@ -77,6 +83,8 @@ kind: Application
 metadata:
   name: prod-kargo
   namespace: argocd
+  annotations:
+    kargo.akuity.io/authorized-stage: prod-kargo
 spec:
   destination:
     name: in-cluster
@@ -101,6 +109,8 @@ kind: Application
 metadata:
   name: prod-onepassword-connect
   namespace: argocd
+  annotations:
+    kargo.akuity.io/authorized-stage: prod-onepassword-connect
 spec:
   destination:
     name: in-cluster

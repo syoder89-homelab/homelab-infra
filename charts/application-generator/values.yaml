@@ -1,9 +1,18 @@
-stages:
+envs:
   prod:
     sources:
       direct: true
+      # Not going to implement the test environment / stage yet
       # stages:
-      # - staging
+      # - test-{{ .app.name }}
     asPR: true
-    targetBranch: env/prod
+    isEphemeral: false
+    targetBranchPrefix: env/prod
     envType: prod
+  #test:
+  #  sources:
+  #    direct: true
+  #  asPR: true
+  #  isEphemeral: true
+  #  targetBranchPrefix: env/test
+  #  envType: test

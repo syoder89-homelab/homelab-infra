@@ -1,30 +1,32 @@
 {{- range $path, $_ := .Files.Glob "applications/*/Chart.yaml" }}
 {{- $app := $.Files.Get $path | fromYaml }}
-{{- range $stage_name, $stage := $.Values.stages }}
+{{- range $env_name, $env := $.Values.envs }}
+{{- if not $env.isEphemeral }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{ $stage_name }}-{{ $app.name }}
+  name: {{ $env_name }}-{{ $app.name }}
   namespace: argocd
   annotations:
-    kargo.akuity.io/authorized-stage: homelab-infra:{{ $stage_name }}-{{ $app.name }}
+    kargo.akuity.io/authorized-stage: {{ $.Values.kargo.projectName }}:{{ $env_name }}-{{ $app.name }}
 spec:
   destination:
     name: in-cluster
     namespace: {{ $app.namespace | default $app.name }}
-  project: infra
+  project: {{ $.Values.argocd.projectName }}
   source:
     directory:
       recurse: true
     path: deploy/
-    repoURL: https://github.com/syoder89-homelab/homelab-infra
-    targetRevision: {{ $stage.targetBranch }}/{{ $app.name }}
+    repoURL: {{ $.Values.repo.repoURL }}
+    targetRevision: {{ $env.targetBranchPrefix }}/{{ $app.name }}
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
+{{- end }}
 {{- end }}
 {{- end }}

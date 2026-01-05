@@ -6,6 +6,6 @@ type: application
 version: "0.0.1"
 appVersion: "3.31.3"
 dependencies:
-  - name: calico
+  - name: tigera-operator
     version: "3.31.3"
     repository: "https://docs.tigera.io/calico/charts"

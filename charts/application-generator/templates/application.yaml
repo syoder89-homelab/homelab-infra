@@ -28,6 +28,10 @@ spec:
     syncOptions:
     - CreateNamespace=true
     - ServerSideApply=true
+  {{- if and (hasKey $app "argocd") (hasKey $app.argocd "ignoreDifferences") }}
+  ignoreDifferences:
+    {{- include "better-tpl" (list $app.argocd.ignoreDifferences (dict "Values" $.Values "app" $app "env" $env)) | nindent 4 }}
+  {{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

@@ -5,6 +5,12 @@ namespace: tigera-operator
 type: application
 version: "0.0.1"
 appVersion: "3.31.3"
+argocd:
+  ignoreDifferences:
+    - group: "*"
+      kind: CustomResourceDefinition
+      jsonPointers:
+      - /spec/preserveUnknownFields
 dependencies:
   - name: tigera-operator
     version: "3.31.3"

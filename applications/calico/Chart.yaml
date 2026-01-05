@@ -1,0 +1,11 @@
+apiVersion: v2
+name: calico
+description: An Umbrella Helm chart for deploying calico
+namespace: tigera-operator
+type: application
+version: "0.0.1"
+appVersion: "3.31.3"
+dependencies:
+  - name: calico
+    version: "3.31.3"
+    repository: "https://docs.tigera.io/calico/charts"

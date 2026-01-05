@@ -29,6 +29,32 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
+  name: prod-calico
+  namespace: argocd
+  annotations:
+    kargo.akuity.io/authorized-stage: homelab-infra:prod-calico
+spec:
+  destination:
+    name: in-cluster
+    namespace: tigera-operator
+  project: infra
+  source:
+    directory:
+      recurse: true
+    path: deploy/
+    repoURL: https://github.com/syoder89-homelab/homelab-infra
+    targetRevision: env/prod/calico
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+---
+# Source: application-generator/templates/application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
   name: prod-cert-manager
   namespace: argocd
   annotations:

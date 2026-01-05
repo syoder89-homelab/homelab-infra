@@ -52,6 +52,11 @@ spec:
     syncOptions:
     - CreateNamespace=true
     - ServerSideApply=true
+  ignoreDifferences:
+    - group: '*'
+      jsonPointers:
+      - /spec/preserveUnknownFields
+      kind: CustomResourceDefinition
 ---
 # Source: application-generator/templates/application.yaml
 apiVersion: argoproj.io/v1alpha1

@@ -6,13 +6,13 @@ metadata:
   name: argocd-repo-server
   namespace: argocd
   labels:
-    helm.sh/chart: argo-cd-9.0.6
+    helm.sh/chart: argo-cd-9.4.3
     app.kubernetes.io/name: argocd-repo-server
     app.kubernetes.io/instance: argocd
     app.kubernetes.io/component: repo-server
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: argocd
-    app.kubernetes.io/version: "v3.1.9"
+    app.kubernetes.io/version: "v3.3.1"
 spec:
   replicas: 1
   revisionHistoryLimit: 3
@@ -23,23 +23,23 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/cmd-params: e63fbcbc5b099a15d6e7030747818f492941e92454666759329ad7dcaf173172
-        checksum/cm: a5da3488846b8dc021a3e42b46d69b24cf88a28a7f1c394068dc11aee915a19c
+        checksum/cmd-params: 2d2da34175d54ea5687006e8f1c833a3a784bb0ded3ec2b8d50a26352cf34701
+        checksum/cm: 2b3c2d137d161862e4d0bf88a620377e46e463dc3e82e8c9075f1818aa5a074d
       labels:
-        helm.sh/chart: argo-cd-9.0.6
+        helm.sh/chart: argo-cd-9.4.3
         app.kubernetes.io/name: argocd-repo-server
         app.kubernetes.io/instance: argocd
         app.kubernetes.io/component: repo-server
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: argocd
-        app.kubernetes.io/version: "v3.1.9"
+        app.kubernetes.io/version: "v3.3.1"
     spec:
       terminationGracePeriodSeconds: 30
       serviceAccountName: argocd-repo-server
       automountServiceAccountToken: true
       containers:
       - name: repo-server
-        image: quay.io/argoproj/argocd:v3.1.9
+        image: quay.io/argoproj/argocd:v3.3.1
         imagePullPolicy: IfNotPresent
         args:
         - /usr/local/bin/argocd-repo-server
@@ -282,6 +282,18 @@ spec:
                 key: reposerver.revision.cache.lock.timeout
                 name: argocd-cmd-params-cm
                 optional: true
+          - name: ARGOCD_REPO_SERVER_ENABLE_BUILTIN_GIT_CONFIG
+            valueFrom:
+              configMapKeyRef:
+                name: argocd-cmd-params-cm
+                key: reposerver.enable.builtin.git.config
+                optional: true
+          - name: ARGOCD_GRPC_MAX_SIZE_MB
+            valueFrom:
+              configMapKeyRef:
+                key: reposerver.grpc.max.size
+                name: argocd-cmd-params-cm
+                optional: true
           - name: ARGOCD_REPO_SERVER_INCLUDE_HIDDEN_DIRECTORIES
             valueFrom:
               configMapKeyRef:
@@ -349,11 +361,11 @@ spec:
             type: RuntimeDefault
       initContainers:
       - command:
-        - /bin/cp
-        - -n
-        - /usr/local/bin/argocd
-        - /var/run/argocd/argocd-cmp-server
-        image: quay.io/argoproj/argocd:v3.1.9
+        - sh
+        - '-c'
+        args:
+        - /bin/cp --update=none /usr/local/bin/argocd /var/run/argocd/argocd && /bin/ln -sf /var/run/argocd/argocd /var/run/argocd/argocd-cmp-server
+        image: quay.io/argoproj/argocd:v3.3.1
         imagePullPolicy: IfNotPresent
         name: copyutil
         resources:

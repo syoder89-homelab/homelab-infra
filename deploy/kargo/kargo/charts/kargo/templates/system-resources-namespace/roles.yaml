@@ -1,10 +1,10 @@
 ---
-# Source: kargo/charts/kargo/templates/cluster-secrets-namespace/roles.yaml
+# Source: kargo/charts/kargo/templates/system-resources-namespace/roles.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: kargo-cluster-secrets-reader
-  namespace: kargo-cluster-secrets
+  name: kargo-system-resources-reader
+  namespace: kargo-system-resources
   labels:
     helm.sh/chart: kargo-1.9.3
     app.kubernetes.io/name: kargo
@@ -21,12 +21,12 @@ rules:
   - list
   - watch
 ---
-# Source: kargo/charts/kargo/templates/cluster-secrets-namespace/roles.yaml
+# Source: kargo/charts/kargo/templates/system-resources-namespace/roles.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: kargo-cluster-secrets-admin
-  namespace: kargo-cluster-secrets
+  name: kargo-system-resources-admin
+  namespace: kargo-system-resources
   labels:
     helm.sh/chart: kargo-1.9.3
     app.kubernetes.io/name: kargo

@@ -6,24 +6,27 @@ metadata:
   name: kargo-controller
   namespace: kargo
   labels:
-    helm.sh/chart: kargo-1.8.4
+    helm.sh/chart: kargo-1.9.3
     app.kubernetes.io/name: kargo
     app.kubernetes.io/instance: kargo
-    app.kubernetes.io/version: "v1.8.4"
+    app.kubernetes.io/version: "v1.9.3"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 data:
   API_SERVER_BASE_URL: https://localhost
   LOG_LEVEL: "INFO"
   LOG_FORMAT: "CONSOLE"
-  CLUSTER_SECRETS_NAMESPACE: kargo-cluster-secrets
+  SYSTEM_RESOURCES_NAMESPACE: "kargo-system-resources"
   IS_DEFAULT_CONTROLLER: "true"
-  GLOBAL_CREDENTIALS_NAMESPACES: ""
+  SHARED_RESOURCES_NAMESPACE: "kargo-shared-resources"
   ALLOW_CREDENTIALS_OVER_HTTP: "false"
   GITCLIENT_NAME: "Scott yoder"
   GITCLIENT_EMAIL: "syoder89@gmail.com"
   GITCLIENT_SIGNING_KEY_TYPE: "gpg"
   GITCLIENT_SIGNING_KEY_PATH: /etc/kargo/git/signingKey
+  CACHE_BY_TAG_POLICY: "Allow"
+  MAX_IMAGE_CACHE_ENTRIES: "100000"
+  IMAGE_REGISTRY_RATE_LIMIT: "20"
   ARGOCD_INTEGRATION_ENABLED: "true"
   ARGOCD_NAMESPACE: argocd
   ARGOCD_WATCH_ARGOCD_NAMESPACE_ONLY: "false"

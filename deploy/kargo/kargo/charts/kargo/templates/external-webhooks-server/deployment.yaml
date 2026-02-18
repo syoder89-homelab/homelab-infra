@@ -6,10 +6,10 @@ metadata:
   name: kargo-external-webhooks-server
   namespace: kargo
   labels:
-    helm.sh/chart: kargo-1.8.4
+    helm.sh/chart: kargo-1.9.3
     app.kubernetes.io/name: kargo
     app.kubernetes.io/instance: kargo
-    app.kubernetes.io/version: "v1.8.4"
+    app.kubernetes.io/version: "v1.9.3"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: external-webhooks-server
 spec:
@@ -24,19 +24,19 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: kargo-1.8.4
+        helm.sh/chart: kargo-1.9.3
         app.kubernetes.io/name: kargo
         app.kubernetes.io/instance: kargo
-        app.kubernetes.io/version: "v1.8.4"
+        app.kubernetes.io/version: "v1.9.3"
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: external-webhooks-server
       annotations:
-        configmap/checksum: e3710059ce9ccd796d78bb090caad202630046290fae0d56ef025379dab6629a
+        configmap/checksum: f89e33c4b0037b83eaf684f1e67fc7823bb06b5c21cf63e20cf11b096aa8af19
     spec:
       serviceAccount: kargo-external-webhooks-server
       containers:
       - name: webhooks-server
-        image: ghcr.io/akuity/kargo:v1.8.4
+        image: ghcr.io/akuity/kargo:v1.9.3
         imagePullPolicy: IfNotPresent
         command: ["/sbin/tini", "--", "/usr/local/bin/kargo"]
         args: ["external-webhooks-server"]

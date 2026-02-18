@@ -6,10 +6,10 @@ metadata:
   name: kargo-garbage-collector
   namespace: kargo
   labels:
-    helm.sh/chart: kargo-1.8.4
+    helm.sh/chart: kargo-1.9.3
     app.kubernetes.io/name: kargo
     app.kubernetes.io/instance: kargo
-    app.kubernetes.io/version: "v1.8.4"
+    app.kubernetes.io/version: "v1.9.3"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: garbage-collector
 spec:
@@ -18,10 +18,10 @@ spec:
   jobTemplate:
     metadata:
       labels:
-        helm.sh/chart: kargo-1.8.4
+        helm.sh/chart: kargo-1.9.3
         app.kubernetes.io/name: kargo
         app.kubernetes.io/instance: kargo
-        app.kubernetes.io/version: "v1.8.4"
+        app.kubernetes.io/version: "v1.9.3"
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: garbage-collector
       annotations:
@@ -30,10 +30,10 @@ spec:
       template:
         metadata:
           labels:
-            helm.sh/chart: kargo-1.8.4
+            helm.sh/chart: kargo-1.9.3
             app.kubernetes.io/name: kargo
             app.kubernetes.io/instance: kargo
-            app.kubernetes.io/version: "v1.8.4"
+            app.kubernetes.io/version: "v1.9.3"
             app.kubernetes.io/managed-by: Helm
             app.kubernetes.io/component: garbage-collector
           annotations:
@@ -42,7 +42,7 @@ spec:
           serviceAccountName: kargo-garbage-collector
           containers:
           - name: garbage-collector
-            image: ghcr.io/akuity/kargo:v1.8.4
+            image: ghcr.io/akuity/kargo:v1.9.3
             imagePullPolicy: IfNotPresent
             command: ["/sbin/tini", "--", "/usr/local/bin/kargo"]
             args: ["garbage-collector"]

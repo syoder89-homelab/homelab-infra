@@ -1,10 +1,10 @@
 ---
-# Source: kargo/charts/kargo/templates/cluster-secrets-namespace/role-bindings.yaml
+# Source: kargo/charts/kargo/templates/shared-resources-namespace/role-bindings.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: kargo-cluster-secrets-reader
-  namespace: kargo-cluster-secrets
+  name: kargo-shared-resources-reader
+  namespace: kargo-shared-resources
   labels:
     helm.sh/chart: kargo-1.9.3
     app.kubernetes.io/name: kargo
@@ -14,35 +14,41 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: kargo-cluster-secrets-reader
+  name: kargo-shared-resources-reader
 subjects:
+- kind: ServiceAccount
+  namespace: kargo
+  name: kargo-user
+- kind: ServiceAccount
+  namespace: kargo
+  name: kargo-viewer
+- kind: ServiceAccount
+  namespace: kargo
+  name: kargo-project-creator
+---
+# Source: kargo/charts/kargo/templates/shared-resources-namespace/role-bindings.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kargo-shared-resources-admin
+  namespace: kargo-shared-resources
+  labels:
+    helm.sh/chart: kargo-1.9.3
+    app.kubernetes.io/name: kargo
+    app.kubernetes.io/instance: kargo
+    app.kubernetes.io/version: "v1.9.3"
+    app.kubernetes.io/managed-by: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kargo-shared-resources-admin
+subjects:
+- kind: ServiceAccount
+  namespace: kargo
+  name: kargo-admin
 - kind: ServiceAccount
   namespace: kargo
   name: kargo-controller
 - kind: ServiceAccount
-  namespace: kargo
-  name: kargo-external-webhooks-server
----
-# Source: kargo/charts/kargo/templates/cluster-secrets-namespace/role-bindings.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: kargo-cluster-secrets-admin
-  namespace: kargo-cluster-secrets
-  labels:
-    helm.sh/chart: kargo-1.9.3
-    app.kubernetes.io/name: kargo
-    app.kubernetes.io/instance: kargo
-    app.kubernetes.io/version: "v1.9.3"
-    app.kubernetes.io/managed-by: Helm
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: kargo-cluster-secrets-admin
-subjects:
-- kind: ServiceAccount
-  namespace: kargo
+  namespace:  kargo
   name: kargo-api
-- kind: ServiceAccount
-  namespace: kargo
-  name: kargo-admin

@@ -9,10 +9,10 @@ kind: ClusterRole
 metadata:
   name: kargo-project-admin
   labels:
-    helm.sh/chart: kargo-1.8.4
+    helm.sh/chart: kargo-1.9.3
     app.kubernetes.io/name: kargo
     app.kubernetes.io/instance: kargo
-    app.kubernetes.io/version: "v1.8.4"
+    app.kubernetes.io/version: "v1.9.3"
     app.kubernetes.io/managed-by: Helm
 rules:
 - apiGroups:
@@ -51,10 +51,10 @@ kind: ClusterRole
 metadata:
   name: kargo-project-secrets-reader
   labels:
-    helm.sh/chart: kargo-1.8.4
+    helm.sh/chart: kargo-1.9.3
     app.kubernetes.io/name: kargo
     app.kubernetes.io/instance: kargo
-    app.kubernetes.io/version: "v1.8.4"
+    app.kubernetes.io/version: "v1.9.3"
     app.kubernetes.io/managed-by: Helm
 rules:
 - apiGroups:

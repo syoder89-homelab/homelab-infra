@@ -1,10 +1,10 @@
 ---
-# Source: kargo/charts/kargo/templates/cluster-secrets-namespace/roles.yaml
+# Source: kargo/charts/kargo/templates/shared-resources-namespace/roles.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: kargo-cluster-secrets-reader
-  namespace: kargo-cluster-secrets
+  name: kargo-shared-resources-reader
+  namespace: kargo-shared-resources
   labels:
     helm.sh/chart: kargo-1.9.3
     app.kubernetes.io/name: kargo
@@ -15,18 +15,18 @@ rules:
 - apiGroups:
   - ""
   resources:
-  - secrets
+  - configmaps
   verbs:
   - get
   - list
   - watch
 ---
-# Source: kargo/charts/kargo/templates/cluster-secrets-namespace/roles.yaml
+# Source: kargo/charts/kargo/templates/shared-resources-namespace/roles.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: kargo-cluster-secrets-admin
-  namespace: kargo-cluster-secrets
+  name: kargo-shared-resources-admin
+  namespace: kargo-shared-resources
   labels:
     helm.sh/chart: kargo-1.9.3
     app.kubernetes.io/name: kargo
@@ -38,5 +38,6 @@ rules:
   - ""
   resources:
   - secrets
+  - configmaps
   verbs:
   - "*"

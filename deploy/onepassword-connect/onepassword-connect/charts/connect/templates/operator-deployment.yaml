@@ -7,7 +7,7 @@ metadata:
   namespace: onepassword-connect
   labels:
     app.kubernetes.io/component: operator
-    helm.sh/chart: connect-2.1.1
+    helm.sh/chart: connect-2.3.0
     app.kubernetes.io/name: connect
     app.kubernetes.io/instance: onepassword-connect
     app.kubernetes.io/version: "1.8.1"
@@ -23,22 +23,30 @@ spec:
         name: onepassword-connect
         app.kubernetes.io/component: operator
     spec:
+      securityContext:
+        fsGroup: 65532
+        runAsGroup: 65532
+        runAsNonRoot: true
+        runAsUser: 65532
+        seccompProfile:
+          type: RuntimeDefault
       tolerations:
         []
       serviceAccountName: onepassword-connect-operator
+      volumes:
       containers:
         - name: onepassword-connect
-          image: 1password/onepassword-operator:1.9.1
+          image: 1password/onepassword-operator:1.11.0
           imagePullPolicy: IfNotPresent
           securityContext:
-            runAsUser: 65532
-            runAsGroup: 65532
             allowPrivilegeEscalation: false
             capabilities:
               drop:
-                - all
+              - ALL
+            readOnlyRootFilesystem: true
           command: [ "/manager" ]
-          args: [ --zap-log-level=info]
+          args:
+            - --zap-log-level=info
           env:
             - name: WATCH_NAMESPACE
               value: 
@@ -61,3 +69,4 @@ spec:
                   key: token
           resources:
             {}
+          volumeMounts:

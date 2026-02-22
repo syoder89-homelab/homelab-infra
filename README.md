@@ -123,13 +123,13 @@ Global and environment-specific configuration:
 
 ## Infrastructure Applications
 
-| Application | Purpose | Critical |
+| Application | Purpose | Version |
 |---|---|---|
-| **ArgoCD** | GitOps continuous deployment and synchronization | Yes |
-| **cert-manager** | Kubernetes-native certificate management and TLS automation | Yes |
-| **Kargo** | Progressive delivery and safe promotion workflows | No |
-| **Kargo Config (Infra)** | Infrastructure-specific Kargo configuration | No |
-| **1Password Connect** | Secure secrets integration with 1Password vaults | No |
+| **ArgoCD** | GitOps continuous deployment and synchronization | 9.4.3 |
+| **cert-manager** | Kubernetes-native certificate management and TLS automation | v1.19.3 |
+| **Kargo** | Progressive delivery and safe promotion workflows | 1.9.3 |
+| **Kargo Config (Infra)** | Infrastructure-specific Kargo configuration | 0.0.1 |
+| **1Password Connect** | Secure secrets integration with 1Password vaults | 2.3.0 |
 
 ## Getting Started
 

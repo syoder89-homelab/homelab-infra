@@ -2,7 +2,8 @@
 
 APP_DIR=../../applications/onepassword-connect
 helm dependency update ${APP_DIR}
-op_json="$(op document get --vault homelab "Scorpius Credentials File" --format json | base64 | tr '/+' '_-' | tr -d '=' | tr -d '\n')"
+# Chart 2.3.0+ mounts credentials as a file — store raw JSON, not base64-encoded
+op_json="$(op document get --vault homelab "Scorpius Credentials File" --format json)"
 op_token="$(op item get --vault homelab "Scorpius Access Token: Scorpius" --fields credential --reveal)"
 kubectl create namespace onepassword-connect
 kubectl -n onepassword-connect create secret generic op-credentials --from-literal=1password-credentials.json="$op_json"

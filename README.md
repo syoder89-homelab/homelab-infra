@@ -8,6 +8,7 @@ A Kubernetes-based infrastructure-as-code repository for deploying and managing 
 - [Architecture](#architecture)
 - [Project Structure](#project-structure)
 - [Infrastructure Applications](#infrastructure-applications)
+- [GKE Staging Cluster](#gke-staging-cluster)
 - [Getting Started](#getting-started)
 - [Configuration](#configuration)
 - [Deployment](#deployment)
@@ -34,6 +35,8 @@ This repository manages the core infrastructure and platform services for a Kube
 - **Kargo**: Progressive delivery platform for safer infrastructure deployments
 - **cert-manager**: Kubernetes native certificate management
 - **1Password Connect**: Secure secrets integration with 1Password vaults
+- **Terraform**: Infrastructure provisioning for GKE staging cluster
+- **GitHub Actions**: CI/CD for Terraform with Workload Identity Federation
 - **YAML-based Configuration**: Version-controlled infrastructure definitions
 
 ### Components
@@ -44,6 +47,9 @@ homelab-infra/
 ├── applications/       # Infrastructure component definitions (umbrella charts)
 ├── charts/            # Helm chart generators
 ├── config/            # Global and environment-specific configurations
+├── terraform/         # Terraform configurations for cloud infrastructure
+│   ├── bootstrap/     # One-time GCP foundation (WIF, service accounts)
+│   └── gke/           # GKE staging cluster (managed by GitHub Actions)
 └── README.md          # This file
 ```
 
@@ -131,6 +137,136 @@ Global and environment-specific configuration:
 | **Kargo Config (Infra)** | Infrastructure-specific Kargo configuration | 0.0.1 |
 | **1Password Connect** | Secure secrets integration with 1Password vaults | 2.3.0 |
 
+## GKE Staging Cluster
+
+This repository includes Terraform configurations for provisioning a GKE Standard free-tier zonal cluster used as a staging environment in the homelab-apps promotion pipeline (`test → staging → prod`). The GKE cluster is registered as an ArgoCD remote cluster, allowing the same ephemeral PR-based deployment pattern used for local testing.
+
+### Architecture
+
+- **Cluster type**: GKE Standard zonal (free tier — no management fee)
+- **System node pool**: 1x `e2-small` spot instance (always-on, ~$6/mo)
+- **Workload node pool**: 0-3x `e2-medium` spot instances (scales to zero when idle)
+- **Auth**: Workload Identity Federation (OIDC) — no long-lived keys for GitHub Actions
+- **State**: GCS bucket with versioning
+
+### Terraform Structure
+
+The Terraform code is split into two configurations to avoid a chicken-and-egg problem:
+
+| Directory | Purpose | How to run |
+|-----------|---------|------------|
+| `terraform/bootstrap/` | GCP foundation: Workload Identity Federation, service accounts, IAM bindings | **Once, locally** with `gcloud` auth |
+| `terraform/gke/` | GKE cluster, VPC, node pools | **GitHub Actions** (or locally) using WIF from bootstrap |
+
+### Setup Steps
+
+#### 1. Create GCS Bucket for Terraform State
+
+```bash
+export PROJECT_ID="your-gcp-project-id"
+gsutil mb -l us-central1 gs://${PROJECT_ID}-terraform-state
+gsutil versioning set on gs://${PROJECT_ID}-terraform-state
+```
+
+#### 2. Run Bootstrap Terraform (locally, once)
+
+This creates the Workload Identity Federation and service accounts that GitHub Actions needs:
+
+```bash
+cd terraform/bootstrap
+
+# Create your tfvars from the example (not checked into git)
+cp terraform.tfvars.example terraform.tfvars
+
+# Extract on-prem K8s OIDC info for WIF (requires kubectl pointed at your cluster)
+./get-k8s-oidc.sh
+# Paste the output into terraform.tfvars
+
+gcloud auth application-default login
+terraform init -backend-config="bucket=${PROJECT_ID}-terraform-state"
+terraform apply
+```
+
+After apply, note the outputs:
+```bash
+terraform output workload_identity_provider    # → GCP_WORKLOAD_IDENTITY_PROVIDER
+terraform output gke_deployer_service_account  # → GCP_SERVICE_ACCOUNT
+terraform output -raw argocd_credential_config # → Credential config JSON for ArgoCD
+```
+
+#### 3. Set GitHub Repository Variables
+
+In the `homelab-infra` repo, go to **Settings → Secrets and variables → Actions → Variables** and set:
+
+| Variable | Value |
+|----------|-------|
+| `GCP_PROJECT_ID` | Your GCP project ID |
+| `GCP_TERRAFORM_STATE_BUCKET` | `{project-id}-terraform-state` |
+| `GCP_WORKLOAD_IDENTITY_PROVIDER` | Output from `terraform output workload_identity_provider` |
+| `GCP_SERVICE_ACCOUNT` | Output from `terraform output gke_deployer_service_account` |
+
+All four are non-sensitive public identifiers — store as variables, not secrets.
+
+#### 4. Provision GKE Cluster
+
+Either push to `main` with changes in `terraform/gke/` to trigger GitHub Actions, use `workflow_dispatch`, or run locally:
+
+```bash
+cd terraform/gke
+cp terraform.tfvars.example terraform.tfvars
+# Edit terraform.tfvars with your project ID
+terraform init -backend-config="bucket=${PROJECT_ID}-terraform-state"
+terraform apply
+```
+
+#### 5. Configure ArgoCD for GKE (Workload Identity Federation)
+
+ArgoCD authenticates to GKE using Workload Identity Federation — no long-lived service account keys. This requires three things:
+
+**a) Create the GCP credential config ConfigMap:**
+
+Populate `homelab-apps/bootstrap/argocd/manifests/gcp-wif-config.yaml` with the Terraform output:
+```bash
+cd terraform/bootstrap
+terraform output -raw argocd_credential_config
+# Paste the JSON into the ConfigMap's credential-config.json field
+kubectl apply -f ../../homelab-apps/bootstrap/argocd/manifests/gcp-wif-config.yaml
+```
+
+**b) Update the ArgoCD Helm values with the WIF audience:**
+
+In `applications/argocd/config/envs/prod/gke-wif.yaml`, replace the `audience` placeholder with:
+```bash
+terraform output -raw argocd_wif_provider
+# Prepend "//iam.googleapis.com/" to the value
+```
+
+**c) Register the GKE cluster secret:**
+
+Populate `homelab-apps/bootstrap/argocd/manifests/gke-cluster-secret.yaml` with GKE cluster details:
+```bash
+cd terraform/gke
+terraform output -raw cluster_endpoint     # → server field
+terraform output -raw cluster_ca_certificate  # → caData field
+kubectl apply -f ../../homelab-apps/bootstrap/argocd/manifests/gke-cluster-secret.yaml
+```
+
+**How it works:** The ArgoCD application-controller pod mounts a projected K8s service account token and a GCP credential config file. When connecting to GKE, the `argocd-k8s-auth gcp` exec provider exchanges the K8s token for a short-lived GCP access token via the Security Token Service, then uses that to authenticate to the GKE API server.
+
+### GitHub Actions Workflow
+
+The `.github/workflows/gke-terraform.yml` workflow manages the GKE cluster:
+
+- **Triggers**: Push to `main` (paths: `terraform/gke/**`), PRs, or manual `workflow_dispatch`
+- **Auth**: Workload Identity Federation (OIDC) — no service account keys
+- **Steps**: `terraform init` → `fmt -check` → `validate` → `plan` → `apply` (apply only on `main`, not PRs)
+
+### Cost
+
+- **Idle**: ~$6/mo (1x e2-small spot system node)
+- **Active**: Additional cost only when workload nodes scale up during deployments
+- **Scale-to-zero**: Workload node pool automatically scales to 0 when no pods are scheduled
+
 ## Getting Started
 
 ### Prerequisites
@@ -138,6 +274,8 @@ Global and environment-specific configuration:
 - Kubernetes cluster (v1.24+)
 - `kubectl` configured to access your cluster
 - `helm` CLI (v3.10+)
+- `terraform` CLI (v1.5+, for GKE staging cluster)
+- `gcloud` CLI (for GKE bootstrap)
 - Git access to this repository
 - 1Password account with Connect token (optional, for secrets management)
 
@@ -457,6 +595,10 @@ kubectl logs -n onepassword-connect deployment/onepassword-connect
 | `bootstrap/` | Initial cluster infrastructure setup scripts and manifests |
 | `charts/` | Reusable Helm chart generators |
 | `config/` | Global and environment-specific infrastructure settings |
+| `terraform/` | Terraform configurations for cloud infrastructure |
+| `terraform/bootstrap/` | One-time GCP foundation setup (WIF, service accounts) |
+| `terraform/gke/` | GKE staging cluster provisioning |
+| `.github/workflows/` | GitHub Actions workflows (Terraform CI/CD) |
 | `old/` | Deprecated or archived configurations |
 | `.gitignore` | Git ignore rules (secrets, temporary files) |
 | `README.md` | This documentation |
@@ -464,6 +606,6 @@ kubectl logs -n onepassword-connect deployment/onepassword-connect
 
 ---
 
-**Last Updated**: December 2025
+**Last Updated**: March 2026
 **Kubernetes Version**: v1.24+
 **Helm Version**: v3.10+

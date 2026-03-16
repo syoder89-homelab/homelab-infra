@@ -1,0 +1,11 @@
+# Copy to terraform.tfvars and fill in values
+# cp terraform.tfvars.example terraform.tfvars
+
+project_id = "your-gcp-project-id"
+
+# Get these values by running: ./get-k8s-oidc.sh
+k8s_oidc_issuer_uri = "https://kubernetes.default.svc.cluster.local"
+
+k8s_oidc_jwks_json = <<-EOT
+  PASTE_JWKS_JSON_HERE
+EOT

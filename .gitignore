@@ -34,3 +34,10 @@ go.work.sum
 *.swp
 *.swo
 *.swn
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+terraform.tfvars
+crash.log

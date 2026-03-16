@@ -213,23 +213,25 @@ Either push to `main` with changes in `terraform/gke/` to trigger GitHub Actions
 
 ```bash
 cd terraform/gke
-cp terraform.tfvars.example terraform.tfvars
-# Edit terraform.tfvars with your project ID
 terraform init -backend-config="bucket=${PROJECT_ID}-terraform-state"
-terraform apply
+terraform apply -var="project_id=${PROJECT_ID}"
 ```
 
 #### 5. Configure ArgoCD for GKE (Workload Identity Federation)
 
 ArgoCD authenticates to GKE using Workload Identity Federation — no long-lived service account keys. This requires three things:
 
-**a) Create the GCP credential config ConfigMap:**
+**a) Store the GCP credential config in 1Password:**
 
-Populate `homelab-apps/bootstrap/argocd/manifests/gcp-wif-config.yaml` with the Terraform output:
+Create a 1Password item named `argocd-gcp-wif-config` in the `homelab` vault with a field named `credential-config.json` containing the Terraform output:
 ```bash
 cd terraform/bootstrap
 terraform output -raw argocd_credential_config
-# Paste the JSON into the ConfigMap's credential-config.json field
+# Create a 1Password item with this JSON as the "credential-config.json" field
+```
+
+Then apply the `OnePasswordItem` to pull it into the cluster as a Secret:
+```bash
 kubectl apply -f ../../homelab-apps/bootstrap/argocd/manifests/gcp-wif-config.yaml
 ```
 

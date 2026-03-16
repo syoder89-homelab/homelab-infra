@@ -243,13 +243,20 @@ terraform output -raw argocd_wif_provider
 # Prepend "//iam.googleapis.com/" to the value
 ```
 
-**c) Register the GKE cluster secret:**
+**c) Store the GKE cluster secret in 1Password:**
 
-Populate `homelab-apps/bootstrap/argocd/manifests/gke-cluster-secret.yaml` with GKE cluster details:
+Create a 1Password item named `argocd-gke-staging-cluster` in the `homelab` vault with three fields:
 ```bash
 cd terraform/gke
-terraform output -raw cluster_endpoint     # → server field
-terraform output -raw cluster_ca_certificate  # → caData field
+# name field:   "gke-staging"
+# server field: prepend "https://" to the output of:
+terraform output -raw cluster_endpoint
+# config field: JSON with the exec provider config and caData (see gke-cluster-secret.yaml comments)
+terraform output -raw cluster_ca_certificate  # → caData value in the config JSON
+```
+
+Then apply the `OnePasswordItem` to pull it into the cluster:
+```bash
 kubectl apply -f ../../homelab-apps/bootstrap/argocd/manifests/gke-cluster-secret.yaml
 ```
 

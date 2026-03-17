@@ -164,9 +164,12 @@ The Terraform code is split into two configurations to avoid a chicken-and-egg p
 
 ```bash
 export PROJECT_ID="your-gcp-project-id"
-gsutil mb -l us-central1 gs://${PROJECT_ID}-terraform-state
-gsutil versioning set on gs://${PROJECT_ID}-terraform-state
+gcloud storage buckets create gs://${PROJECT_ID}-terraform-state --location=us-central1 --uniform-bucket-level-access
+gcloud storage buckets update gs://${PROJECT_ID}-terraform-state --public-access-prevention
+gcloud storage buckets update gs://${PROJECT_ID}-terraform-state --versioning
 ```
+
+This backend is GCS, not S3. The bucket is private by default, but the commands above also enforce uniform bucket-level access and block all public access.
 
 #### 2. Run Bootstrap Terraform (locally, once)
 

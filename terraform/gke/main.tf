@@ -76,7 +76,10 @@ resource "google_container_node_pool" "system" {
   location = var.zone
   cluster  = google_container_cluster.staging.name
 
-  node_count = 1
+  autoscaling {
+    min_node_count = 0
+    max_node_count = 1
+  }
 
   node_config {
     machine_type = var.system_node_machine_type

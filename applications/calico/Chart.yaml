@@ -5,6 +5,8 @@ namespace: tigera-operator
 type: application
 version: "0.0.1"
 appVersion: "3.31.3"
+clusterTypes:
+  - bare-metal
 argocd:
   ignoreDifferences:
     - group: "*"

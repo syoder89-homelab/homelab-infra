@@ -24,8 +24,6 @@ spec:
       steps:
       - task:
           name: prepare-workdir 
-      # We want to use global config for the application-generator
-      # The config-generator chart needs access to the config manifests
       # Copy config manifests into config-generator chart
       - uses: copy
         config:
@@ -45,7 +43,6 @@ spec:
               value: all
             - key: appName
               value: all
-      # The application-generator chart needs access to the application manifests
       # Copy application manifests into application-generator chart
       - uses: copy
         config:

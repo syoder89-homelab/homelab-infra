@@ -4,17 +4,22 @@ This file provides context for AI coding agents working in this repository.
 
 ## Repository Overview
 
-This is a **Kubernetes infrastructure-as-code** repository for a home lab. It deploys and manages **core platform services and cluster infrastructure** using **Helm charts**, **ArgoCD** (GitOps), and **Kargo** (progressive delivery). The repository does NOT contain application source code — it contains only deployment configuration for infrastructure components.
+This is a **Kubernetes infrastructure-as-code** repository for a home lab. It deploys and manages **cross-cluster infrastructure services** using **Helm charts**, **ArgoCD** (GitOps), and **Kargo** (progressive delivery). The repository does NOT contain application source code — it contains only deployment configuration for infrastructure components.
+
+**This is one of three GitOps repositories:**
+- **homelab-management** — Management plane (ArgoCD, Kargo) — deployed only to the management cluster (Scorpius)
+- **homelab-infra** (this repo) — Cross-cluster infrastructure — deployed to ALL clusters
+- **homelab-apps** — Application workloads — per-app cluster targeting
 
 ## Technology Stack
 
 - **Kubernetes** (v1.24+): Container orchestration
 - **Helm** (v3.10+): Chart-based Kubernetes package management
-- **ArgoCD**: GitOps continuous deployment (syncs Git → cluster)
-- **Kargo**: Progressive delivery (staged promotions between environments)
+- **ArgoCD**: GitOps continuous deployment (managed by homelab-management, not this repo)
+- **Kargo**: Progressive delivery (managed by homelab-management, Kargo Project for this repo is `homelab-infra`)
 - **cert-manager**: Kubernetes-native TLS certificate management
 - **1Password Connect**: Secure secrets integration with 1Password vaults
-- **Calico**: Kubernetes networking (CNI) via Tigera Operator
+- **Calico**: Kubernetes networking (CNI) via Tigera Operator — bare-metal only
 - **YAML**: All configuration is YAML-based
 
 ## Key Architecture Concepts
@@ -44,11 +49,13 @@ The `charts/` directory contains two critical generator charts:
 
 Both generators use a recursive `better-tpl` helper that processes Helm templates within templates.
 
-### Environments
+### Multi-Cluster Deployment
 
-Defined in `charts/application-generator/values.yaml`:
-- **prod**: Non-ephemeral, direct promotions, creates PRs (`asPR: true`)
-- **test**: Currently commented out — planned as ephemeral with PR-based ApplicationSets
+Environments are defined in `charts/application-generator/values.yaml` with a `clusterType` field:
+- **prod**: bare-metal on-prem cluster (Scorpius), direct promotions, creates PRs
+- **staging**: (commented out) GKE staging cluster, `clusterType: gke`
+
+Applications can declare `clusterTypes` in their `Chart.yaml` to limit which environments they deploy to. For example, Calico declares `clusterTypes: [bare-metal]` and only deploys to the prod (bare-metal) environment. Apps without `clusterTypes` deploy to all environments.
 
 ### Configuration Hierarchy
 
@@ -73,23 +80,20 @@ In config YAML files, these Helm template variables are available:
 Application `Chart.yaml` files use custom fields consumed by the application-generator:
 - `namespace`: Target Kubernetes namespace (defaults to app name)
 - `releaseName`: Helm release name (defaults to app name)
+- `clusterTypes`: Optional list of cluster types this app should deploy to (e.g., `[bare-metal]`). If omitted, the app deploys to all environments.
 - `argocd.ignoreDifferences`: Passed through to the generated ArgoCD Application
 
 ## Directory Structure
 
 ```
 applications/              # Umbrella Helm charts (one per infra component)
-  argocd/                  # ArgoCD - GitOps CD
-  calico/                  # Calico CNI networking (Tigera Operator)
-  cert-manager/            # TLS certificate management
-  kargo/                   # Progressive delivery platform
-  kargo-config-infra/      # Kargo project configuration
-  onepassword-connect/     # 1Password secrets integration
+  calico/                  # Calico CNI networking (Tigera Operator) — bare-metal only
+  cert-manager/            # TLS certificate management — all clusters
+  onepassword-connect/     # 1Password secrets integration — all clusters
 
-bootstrap/                 # One-time cluster setup scripts
-  argocd/                  # ArgoCD bootstrap (setup.sh + manifests)
+bootstrap/                 # One-time cluster setup scripts & Kargo config
   cert-manager/            # cert-manager bootstrap
-  kargo/                   # Kargo bootstrap (setup.sh + manifests)
+  kargo/                   # Kargo Project, Tasks, Warehouse, Stage for homelab-infra
   onepassword-connect/     # 1Password Connect bootstrap
 
 charts/                    # Reusable Helm chart generators
@@ -160,7 +164,8 @@ helm template applications/{app-name}
 - The `config-generator` paths reference `config/platform/` and `config/application/` — these are mapped during the Kargo promotion process
 - Helm template syntax in YAML config files is intentional and processed by `config-generator`
 - The `better-tpl` helper recursively renders templates, so templated values can reference other templated values
-- Infrastructure components are **critical** — ArgoCD and cert-manager outages affect the entire cluster
+- Infrastructure components are **critical** — cert-manager and 1Password Connect outages affect the entire cluster
+- ArgoCD and Kargo are managed by the `homelab-management` repo, not this one
 
 ## Reference Documentation
 

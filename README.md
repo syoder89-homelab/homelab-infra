@@ -17,13 +17,18 @@ A Kubernetes-based infrastructure-as-code repository for deploying and managing 
 
 ## Overview
 
-This repository manages the core infrastructure and platform services for a Kubernetes cluster with:
+This repository manages cross-cluster infrastructure and platform services for all Kubernetes clusters with:
 
-- **Core Infrastructure**: ArgoCD (GitOps CD), cert-manager (certificate management), Kargo (progressive delivery), and 1Password Connect (secrets integration)
-- **Multiple Environments**: Support for different deployment environments (prod, test, dev)
+- **Cross-Cluster Infrastructure**: cert-manager (certificate management), 1Password Connect (secrets integration), Calico (networking, bare-metal only)
+- **Multi-Cluster Support**: clusterType-based filtering deploys apps to appropriate clusters (bare-metal, GKE, etc.)
+- **Multiple Environments**: Support for different deployment environments (prod, staging)
 - **GitOps Workflow**: Integration with ArgoCD for continuous deployment and Kargo for progressive delivery
 - **Helm-based Deployment**: Umbrella charts for easy infrastructure component management
-- **Bootstrap Automation**: Automated setup and initialization of critical cluster services
+
+**This is one of three GitOps repositories:**
+- **[homelab-management](https://github.com/syoder89-homelab/homelab-management)** — Management plane (ArgoCD, Kargo) — deployed only to the management cluster (Scorpius)
+- **homelab-infra** (this repo) — Cross-cluster infrastructure — deployed to ALL clusters
+- **[homelab-apps](https://github.com/syoder89-homelab/homelab-apps)** — Application workloads — per-app cluster targeting
 
 ## Architecture
 
@@ -43,7 +48,7 @@ This repository manages the core infrastructure and platform services for a Kube
 
 ```
 homelab-infra/
-├── bootstrap/          # Initial cluster setup and bootstrapping for infrastructure services
+├── bootstrap/          # Kargo project config & initial setup for infra services
 ├── applications/       # Infrastructure component definitions (umbrella charts)
 ├── charts/            # Helm chart generators
 ├── config/            # Global and environment-specific configurations
@@ -57,19 +62,17 @@ homelab-infra/
 
 ### `bootstrap/`
 
-Contains initialization scripts and manifests for setting up the Kubernetes cluster infrastructure:
+Contains Kargo project configuration and initialization resources for infrastructure services:
 
-- **`argocd/`**: ArgoCD setup for GitOps deployments
-  - `setup.sh`: Script to initialize ArgoCD and deploy core infrastructure applications
-  - `manifests/`: ArgoCD Application and AppProject definitions for infrastructure components
-  
 - **`cert-manager/`**: Certificate manager setup for TLS certificate management
   - `setup.sh`: Script to initialize cert-manager
   - `manifests/`: cert-manager Application definitions and issuers
 
-- **`kargo/`**: Kargo setup for progressive infrastructure deployments
-  - `setup.sh`: Script to initialize Kargo
-  - `manifests/`: Kargo Project, Stages, Tasks, and Warehouse definitions for infrastructure promotions
+- **`kargo/`**: Kargo resources for the `homelab-infra` project
+  - `project.yaml`: Kargo Project definition
+  - `tasks.yaml`: PromotionTasks (prepare-workdir, push-manifests)
+  - `warehouse.yaml`: Warehouse watching `applications/*/Chart.yaml`
+  - `stages.yaml`: Stage for application-generator promotion
 
 - **`onepassword-connect/`**: 1Password Connect setup for secret management integration
   - `setup.sh`: Script to initialize 1Password Connect operator
@@ -77,26 +80,19 @@ Contains initialization scripts and manifests for setting up the Kubernetes clus
 
 ### `applications/`
 
-Umbrella Helm charts for core infrastructure services:
+Umbrella Helm charts for cross-cluster infrastructure services:
 
-- `argocd/`: ArgoCD - GitOps continuous deployment tool
-  - Manages declarative Kubernetes resource synchronization
-  - Enables GitOps workflows for all cluster applications
+- `calico/`: Calico CNI networking via Tigera Operator
+  - **bare-metal only** (`clusterTypes: [bare-metal]`)
+  - Manages Kubernetes networking, network policy, and BGP peering
 
 - `cert-manager/`: Certificate management and TLS automation
+  - Deployed to **all clusters**
   - Automates SSL/TLS certificate provisioning and renewal
-  - Supports Let's Encrypt and other certificate authorities
-
-- `kargo/`: Progressive delivery platform
-  - Enables safe, automated promotion workflows between environments
-  - Manages staged rollouts and approval gates
-
-- `kargo-config-infra/`: Kargo configuration specific to infrastructure deployments
-  - Defines promotion stages and workflow for infrastructure components
 
 - `onepassword-connect/`: 1Password Connect integration
+  - Deployed to **all clusters**
   - Enables secure secret management from 1Password vaults
-  - Provides ExternalSecrets integration
 
 Each application follows the structure:
 ```
@@ -129,13 +125,13 @@ Global and environment-specific configuration:
 
 ## Infrastructure Applications
 
-| Application | Purpose | Version |
-|---|---|---|
-| **ArgoCD** | GitOps continuous deployment and synchronization | 9.4.3 |
-| **cert-manager** | Kubernetes-native certificate management and TLS automation | v1.19.3 |
-| **Kargo** | Progressive delivery and safe promotion workflows | 1.9.3 |
-| **Kargo Config (Infra)** | Infrastructure-specific Kargo configuration | 0.0.1 |
-| **1Password Connect** | Secure secrets integration with 1Password vaults | 2.3.0 |
+| Application | Purpose | Version | Cluster Types |
+|---|---|---|---|
+| **Calico** | Kubernetes CNI networking via Tigera Operator | 3.29.3 | bare-metal |
+| **cert-manager** | Kubernetes-native certificate management and TLS automation | v1.19.3 | all |
+| **1Password Connect** | Secure secrets integration with 1Password vaults | 2.3.0 | all |
+
+> **Note:** ArgoCD and Kargo are managed by the [homelab-management](https://github.com/syoder89-homelab/homelab-management) repo and are no longer in this repository.
 
 ## GKE Staging Cluster
 
@@ -293,33 +289,26 @@ The `.github/workflows/gke-terraform.yml` workflow manages the GKE cluster:
 
 ### Initial Cluster Setup
 
-Follow these steps in order to bootstrap the infrastructure:
+The full cluster bootstrap (including ArgoCD and Kargo) is handled by the **homelab-management** repo. This repo's bootstrap scripts are for setting up individual infrastructure services:
 
-1. **Bootstrap ArgoCD** (required - enables GitOps):
-   ```bash
-   cd bootstrap/argocd
-   ./setup.sh
-   ```
-
-2. **Bootstrap cert-manager** (recommended for TLS):
-   ```bash
-   cd bootstrap/cert-manager
-   ./setup.sh
-   ```
-
-3. **Bootstrap Kargo** (optional, for progressive delivery):
-   ```bash
-   cd bootstrap/kargo
-   ./setup.sh
-   ```
-
-4. **Bootstrap 1Password Connect** (optional, for secrets integration):
+1. **Bootstrap 1Password Connect** (for secrets integration):
    ```bash
    cd bootstrap/onepassword-connect
    ./setup.sh
    ```
 
-5. **Verify deployments**:
+2. **Bootstrap cert-manager** (for TLS):
+   ```bash
+   cd bootstrap/cert-manager
+   ./setup.sh
+   ```
+
+3. **Apply Kargo resources** (applied by management bootstrap or manually):
+   ```bash
+   kubectl apply -f bootstrap/kargo/
+   ```
+
+4. **Verify deployments**:
    ```bash
    kubectl get all -A
    kubectl get applications -A  # ArgoCD Applications

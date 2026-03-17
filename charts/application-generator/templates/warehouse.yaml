@@ -1,5 +1,12 @@
 {{- range $path, $_ := .Files.Glob "applications/*/Chart.yaml" }}
 {{- $app := $.Files.Get $path | fromYaml }}
+{{- $hasMatchingEnv := false }}
+{{- range $env_name, $env := $.Values.envs }}
+{{- if or (not $app.clusterTypes) (has $env.clusterType ($app.clusterTypes | default list)) }}
+{{- $hasMatchingEnv = true }}
+{{- end }}
+{{- end }}
+{{- if $hasMatchingEnv }}
 ---
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
@@ -17,4 +24,5 @@ spec:
       - {{ dir $path }}
       # Alternate config strategy
       #- stages/**/{{ $app.name }}-values.yaml
+{{- end }}
 {{- end }}

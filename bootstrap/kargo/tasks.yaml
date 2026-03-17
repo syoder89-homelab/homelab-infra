@@ -4,7 +4,6 @@ metadata:
   name: prepare-workdir
   namespace: homelab-infra
 spec:
-  # Task-wide input variables
   vars:
   - name: gitRepo
   - name: sourceBranch
@@ -19,7 +18,6 @@ spec:
     value: ${{ path_out }}/out
   - name: clearPath
     value: "true"
-  # Sequence of promotion steps
   steps:
     - uses: git-clone
       config:
@@ -41,7 +39,6 @@ metadata:
   name: push-manifests
   namespace: homelab-infra
 spec:
-  # Task-wide input variables
   vars:
   - name: gitRepo
   - name: sourceBranch
@@ -56,7 +53,6 @@ spec:
     value: "false"
   - name: waitForPR
     value: "true"
-  # Sequence of promotion steps
   steps:
     - uses: git-commit
       as: commit

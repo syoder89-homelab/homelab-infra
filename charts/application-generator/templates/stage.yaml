@@ -2,6 +2,7 @@
 {{- $app := $.Files.Get $path | fromYaml }}
 {{- range $env_name, $env := $.Values.envs }}
 {{- if not $env.isEphemeral }}
+{{- if or (not $app.clusterTypes) (has $env.clusterType ($app.clusterTypes | default list)) }}
 ---
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
@@ -83,6 +84,7 @@ spec:
             sources:
             - repoURL: {{`${{ vars.gitRepo }}`}}
               desiredRevision: {{`${{ outputs.promotion.commit }}`}}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

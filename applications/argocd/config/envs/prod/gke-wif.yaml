@@ -18,7 +18,7 @@ argo-cd:
           sources:
             - serviceAccountToken:
                 # Must match the audience in the credential config
-                audience: "//iam.googleapis.com/projects/103195527972/locations/global/workloadIdentityPools/homelab-k8s-pool/providers/homelab-k8s-oidc
+                audience: "//iam.googleapis.com/projects/103195527972/locations/global/workloadIdentityPools/homelab-k8s-pool/providers/homelab-k8s-oidc"
                 expirationSeconds: 3600
                 path: gcp-token
       # GCP credential config from the argocd-gcp-wif-config Secret (via 1Password)

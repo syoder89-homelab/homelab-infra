@@ -47,6 +47,12 @@ resource "google_project_iam_member" "gke_deployer_container_admin" {
   member  = "serviceAccount:${google_service_account.gke_deployer.email}"
 }
 
+resource "google_project_iam_member" "gke_deployer_compute_network" {
+  project = var.project_id
+  role    = "roles/compute.networkAdmin"
+  member  = "serviceAccount:${google_service_account.gke_deployer.email}"
+}
+
 resource "google_project_iam_member" "gke_deployer_sa_user" {
   project = var.project_id
   role    = "roles/iam.serviceAccountUser"

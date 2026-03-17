@@ -28,9 +28,9 @@ variable "system_node_machine_type" {
 }
 
 variable "workload_node_machine_type" {
-  description = "Machine type for the workload node pool (scale-to-zero)"
+  description = "Machine type for the workload node pool (sized to idle on a single worker)"
   type        = string
-  default     = "e2-medium"
+  default     = "e2-standard-2"
 }
 
 variable "workload_node_max_count" {

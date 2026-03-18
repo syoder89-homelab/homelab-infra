@@ -236,7 +236,7 @@ kubectl apply -f ../../homelab-apps/bootstrap/argocd/manifests/gcp-wif-config.ya
 
 **b) Update the ArgoCD Helm values with the WIF audience:**
 
-In `applications/argocd/config/envs/prod/gke-wif.yaml`, replace the `audience` placeholder with:
+In `applications/argocd/config/envs/management/gke-wif.yaml` (in the homelab-management repo), replace the `audience` placeholder with:
 ```bash
 terraform output -raw argocd_wif_provider
 # Prepend "//iam.googleapis.com/" to the value

@@ -66,17 +66,18 @@ Contains Kargo project configuration and initialization resources for infrastruc
 
 - **`cert-manager/`**: Certificate manager setup for TLS certificate management
   - `setup.sh`: Script to initialize cert-manager
-  - `manifests/`: cert-manager Application definitions and issuers
 
 - **`kargo/`**: Kargo resources for the `homelab-infra` project
-  - `project.yaml`: Kargo Project definition
-  - `tasks.yaml`: PromotionTasks (prepare-workdir, push-manifests)
-  - `warehouse.yaml`: Warehouse watching `applications/*/Chart.yaml`
-  - `stages.yaml`: Stage for application-generator promotion
+  - `setup.sh`: Script to initialize Kargo
+  - `manifests/`: Kargo project manifests
+    - `project.yaml`: Kargo Project definition
+    - `tasks.yaml`: PromotionTasks (prepare-workdir, push-manifests)
+    - `warehouse.yaml`: Warehouse watching `applications/*/Chart.yaml`
+    - `stages.yaml`: Stage for application-generator promotion
+    - `kargo-github-pat.yaml`: GitHub PAT secret for Kargo
 
 - **`onepassword-connect/`**: 1Password Connect setup for secret management integration
   - `setup.sh`: Script to initialize 1Password Connect operator
-  - `manifests/`: Secret Operator Application definitions
 
 ### `applications/`
 

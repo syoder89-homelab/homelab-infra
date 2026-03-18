@@ -91,7 +91,8 @@ spec:
       kind: Warehouse
       name: cert-manager
     sources:
-      direct: true
+      stages:
+      - staging-cert-manager
   promotionTemplate:
     spec:
       vars:
@@ -163,6 +164,86 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
+  name: staging-cert-manager
+  namespace: homelab-infra
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: cert-manager
+    sources:
+      direct: true
+  promotionTemplate:
+    spec:
+      vars:
+      - name: gitRepo
+        value: https://github.com/syoder89-homelab/homelab-infra
+      - name: targetBranch
+        value: env/staging/cert-manager
+      - name: path_src
+        value: ./src
+      - name: path_out
+        value: ./out
+      steps:
+      - task:
+          name: prepare-workdir 
+      # The config-generator chart needs access to the config manifests
+      # Copy config manifests into config-generator chart
+      - uses: copy
+        config:
+          inPath: ${{ vars.path_src }}/config
+          outPath: ${{ vars.path_src }}/charts/config-generator/config/platform
+      - uses: copy
+        config:
+          inPath: ${{ vars.path_src }}/applications/cert-manager/config
+          outPath: ${{ vars.path_src }}/charts/config-generator/config/application
+      # Render the config files from templates
+      - uses: helm-template
+        config:
+          releaseName: config-generator
+          path: ${{ vars.path_src }}/charts/config-generator
+          outLayout: flat
+          outPath: /tmp/values.yaml
+          setValues:
+            - key: envName
+              value: staging
+            - key: envType
+              value: staging
+            - key: appName
+              value: cert-manager
+          #valuesFiles:
+          #- ${{ vars.path_src }}/config/staging/cert-manager-values.yaml
+          #- ${{ vars.path_src }}/applications/cert-manager/values/staging.yaml
+      - uses: helm-template
+        config:
+          releaseName: cert-manager
+          namespace: cert-manager
+          buildDependencies: true
+          includeCRDs: true
+          path: ${{ vars.path_src }}/applications/cert-manager
+          outPath: ${{ vars.path_out }}/deploy/cert-manager
+          valuesFiles:
+          - /tmp/values.yaml
+      - task:
+          name: push-manifests
+        as: promotion
+        vars:
+        - name: asPR
+          value: "true"
+        - name: targetBranch
+          value: env/staging/cert-manager
+      - uses: argocd-update
+        config:
+          apps:
+          - name: staging-cert-manager
+            sources:
+            - repoURL: ${{ vars.gitRepo }}
+              desiredRevision: ${{ outputs.promotion.commit }}
+---
+# Source: application-generator/templates/stage.yaml
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
   name: prod-onepassword-connect
   namespace: homelab-infra
 spec:
@@ -171,7 +252,8 @@ spec:
       kind: Warehouse
       name: onepassword-connect
     sources:
-      direct: true
+      stages:
+      - staging-onepassword-connect
   promotionTemplate:
     spec:
       vars:
@@ -235,6 +317,86 @@ spec:
         config:
           apps:
           - name: prod-onepassword-connect
+            sources:
+            - repoURL: ${{ vars.gitRepo }}
+              desiredRevision: ${{ outputs.promotion.commit }}
+---
+# Source: application-generator/templates/stage.yaml
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: staging-onepassword-connect
+  namespace: homelab-infra
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: onepassword-connect
+    sources:
+      direct: true
+  promotionTemplate:
+    spec:
+      vars:
+      - name: gitRepo
+        value: https://github.com/syoder89-homelab/homelab-infra
+      - name: targetBranch
+        value: env/staging/onepassword-connect
+      - name: path_src
+        value: ./src
+      - name: path_out
+        value: ./out
+      steps:
+      - task:
+          name: prepare-workdir 
+      # The config-generator chart needs access to the config manifests
+      # Copy config manifests into config-generator chart
+      - uses: copy
+        config:
+          inPath: ${{ vars.path_src }}/config
+          outPath: ${{ vars.path_src }}/charts/config-generator/config/platform
+      - uses: copy
+        config:
+          inPath: ${{ vars.path_src }}/applications/onepassword-connect/config
+          outPath: ${{ vars.path_src }}/charts/config-generator/config/application
+      # Render the config files from templates
+      - uses: helm-template
+        config:
+          releaseName: config-generator
+          path: ${{ vars.path_src }}/charts/config-generator
+          outLayout: flat
+          outPath: /tmp/values.yaml
+          setValues:
+            - key: envName
+              value: staging
+            - key: envType
+              value: staging
+            - key: appName
+              value: onepassword-connect
+          #valuesFiles:
+          #- ${{ vars.path_src }}/config/staging/onepassword-connect-values.yaml
+          #- ${{ vars.path_src }}/applications/onepassword-connect/values/staging.yaml
+      - uses: helm-template
+        config:
+          releaseName: onepassword-connect
+          namespace: onepassword-connect
+          buildDependencies: true
+          includeCRDs: true
+          path: ${{ vars.path_src }}/applications/onepassword-connect
+          outPath: ${{ vars.path_out }}/deploy/onepassword-connect
+          valuesFiles:
+          - /tmp/values.yaml
+      - task:
+          name: push-manifests
+        as: promotion
+        vars:
+        - name: asPR
+          value: "true"
+        - name: targetBranch
+          value: env/staging/onepassword-connect
+      - uses: argocd-update
+        config:
+          apps:
+          - name: staging-onepassword-connect
             sources:
             - repoURL: ${{ vars.gitRepo }}
               desiredRevision: ${{ outputs.promotion.commit }}

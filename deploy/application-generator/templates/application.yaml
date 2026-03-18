@@ -64,6 +64,34 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
+  name: staging-cert-manager
+  namespace: argocd
+  annotations:
+    kargo.akuity.io/authorized-stage: homelab-infra:staging-cert-manager
+spec:
+  destination:
+    name: gke-staging
+    namespace: cert-manager
+  project: infra
+  source:
+    directory:
+      recurse: true
+    path: deploy/
+    repoURL: https://github.com/syoder89-homelab/homelab-infra
+    targetRevision: env/staging/cert-manager
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
+    - ClientSideApplyMigration=false
+---
+# Source: application-generator/templates/application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
   name: prod-onepassword-connect
   namespace: argocd
   annotations:
@@ -79,6 +107,34 @@ spec:
     path: deploy/
     repoURL: https://github.com/syoder89-homelab/homelab-infra
     targetRevision: env/prod/onepassword-connect
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
+    - ClientSideApplyMigration=false
+---
+# Source: application-generator/templates/application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: staging-onepassword-connect
+  namespace: argocd
+  annotations:
+    kargo.akuity.io/authorized-stage: homelab-infra:staging-onepassword-connect
+spec:
+  destination:
+    name: gke-staging
+    namespace: onepassword-connect
+  project: infra
+  source:
+    directory:
+      recurse: true
+    path: deploy/
+    repoURL: https://github.com/syoder89-homelab/homelab-infra
+    targetRevision: env/staging/onepassword-connect
   syncPolicy:
     automated:
       prune: true

@@ -1,18 +1,20 @@
 envs:
   prod:
     sources:
-      direct: true
+      stages:
+      - staging-{{ .app.name }}
+    promotedFrom: staging
     asPR: true
     isEphemeral: false
     targetBranchPrefix: env/prod
     envType: prod
     clusterType: bare-metal
-  # staging:
-  #   sources:
-  #     direct: true
-  #   asPR: true
-  #   isEphemeral: false
-  #   targetBranchPrefix: env/staging
-  #   envType: gke
-  #   clusterType: gke
-  #   clusterName: gke-staging
+  staging:
+    sources:
+      direct: true
+    asPR: true
+    isEphemeral: false
+    targetBranchPrefix: env/staging
+    envType: staging
+    clusterType: gke
+    clusterName: gke-staging

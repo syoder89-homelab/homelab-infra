@@ -15,9 +15,20 @@ spec:
       kind: Warehouse
       name: {{ $app.name }}
     sources:
-      {{- /* Allow the sources to be templated based on env and app values */ -}}
+      {{- /* Check if this env promotes from an upstream stage that doesn't exist for this app */ -}}
+      {{- $useDirectSource := false }}
+      {{- if $env.promotedFrom }}
+        {{- $upstreamEnv := index $.Values.envs $env.promotedFrom }}
+        {{- if and $app.clusterTypes (not (has $upstreamEnv.clusterType ($app.clusterTypes | default list))) }}
+          {{- $useDirectSource = true }}
+        {{- end }}
+      {{- end }}
+      {{- if $useDirectSource }}
+      direct: true
+      {{- else }}
       {{- $ctx := (dict "Values" $.Values "app" $app "env" $env) }}
       {{- include "better-tpl" (list $env.sources $ctx) | nindent 6 }}
+      {{- end }}
   promotionTemplate:
     spec:
       vars:

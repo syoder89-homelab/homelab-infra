@@ -1,0 +1,11 @@
+apiVersion: v2
+name: tempo
+description: An Umbrella Helm chart for deploying Grafana Tempo in single binary mode
+namespace: observability
+type: application
+version: "0.0.1"
+appVersion: "2.9.0"
+dependencies:
+  - name: tempo
+    version: "1.24.4"
+    repository: "https://grafana.github.io/helm-charts"

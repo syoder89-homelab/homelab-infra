@@ -1,0 +1,89 @@
+adminCredentialsItemName: grafana-infra-admin-credentials
+
+kube-prometheus-stack:
+  # ── Prometheus ──────────────────────────────────────────────────────────────
+  prometheus:
+    prometheusSpec:
+      retention: 90d
+      enableRemoteWriteReceiver: true
+      resources:
+        requests:
+          cpu: 50m
+          memory: 512Mi
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            storageClassName: openebs-storage-persist
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 50Gi
+
+  # ── Prometheus Operator ─────────────────────────────────────────────────────
+  prometheusOperator:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+
+  # ── Node Exporter ───────────────────────────────────────────────────────────
+  prometheus-node-exporter:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 50Mi
+
+  # ── Kube State Metrics ──────────────────────────────────────────────────────
+  kube-state-metrics:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+
+  # ── Grafana ─────────────────────────────────────────────────────────────────
+  grafana:
+    deploymentStrategy:
+      type: Recreate
+    service:
+      type: LoadBalancer
+    persistence:
+      enabled: true
+      storageClassName: openebs-storage-persist
+      size: 5Gi
+    admin:
+      existingSecret: grafana-infra-admin-credentials
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+    additionalDataSources:
+      - name: Loki
+        uid: loki
+        type: loki
+        url: http://loki.observability:3100
+        access: proxy
+        isDefault: false
+      - name: Tempo
+        uid: tempo
+        type: tempo
+        url: http://tempo.observability:3200
+        access: proxy
+        isDefault: false
+        jsonData:
+          tracesToLogsV2:
+            datasourceUid: loki
+            spanStartTimeShift: "-1h"
+            spanEndTimeShift: "1h"
+            filterByTraceID: true
+            filterBySpanID: false
+          serviceMap:
+            datasourceUid: prometheus
+
+  # ── Alertmanager ────────────────────────────────────────────────────────────
+  alertmanager:
+    alertmanagerSpec:
+      resources:
+        requests:
+          cpu: 50m
+          memory: 128Mi

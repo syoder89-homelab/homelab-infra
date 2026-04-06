@@ -1,0 +1,11 @@
+apiVersion: v2
+name: grafana-alloy
+description: An Umbrella Helm chart for deploying Grafana Alloy as a unified collection agent
+namespace: observability
+type: application
+version: "0.0.1"
+appVersion: "v1.15.0"
+dependencies:
+  - name: alloy
+    version: "1.7.0"
+    repository: "https://grafana.github.io/helm-charts"

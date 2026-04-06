@@ -1,0 +1,31 @@
+tempo:
+  # ── Tempo Configuration ──────────────────────────────────────────────────────
+  tempo:
+    storage:
+      trace:
+        backend: local
+        local:
+          path: /var/tempo/traces
+        wal:
+          path: /var/tempo/wal
+    compactor:
+      compaction:
+        block_retention: 336h  # 14 days
+
+  # ── Persistence ──────────────────────────────────────────────────────────────
+  persistence:
+    enabled: true
+    storageClassName: openebs-storage-persist
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+
+  # ── Service ───────────────────────────────────────────────────────────────────
+  service:
+    type: ClusterIP
+
+  # ── Resources ─────────────────────────────────────────────────────────────────
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi

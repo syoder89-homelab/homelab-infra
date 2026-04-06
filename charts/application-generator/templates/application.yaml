@@ -1,6 +1,7 @@
 {{- range $path, $_ := .Files.Glob "applications/*/Chart.yaml" }}
 {{- $app := $.Files.Get $path | fromYaml }}
 {{- range $env_name, $env := $.Values.envs }}
+{{- if ne $env.enabled false }}
 {{- if not $env.isEphemeral }}
 {{- if or (not $app.clusterTypes) (has $env.clusterType ($app.clusterTypes | default list)) }}
 ---
@@ -34,6 +35,7 @@ spec:
   ignoreDifferences:
     {{- include "better-tpl" (list $app.argocd.ignoreDifferences (dict "Values" $.Values "app" $app "env" $env)) | nindent 4 }}
   {{- end }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

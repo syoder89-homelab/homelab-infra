@@ -10,6 +10,7 @@ envs:
     envType: prod
     clusterType: bare-metal
   staging:
+    enabled: false
     sources:
       direct: true
     asPR: true

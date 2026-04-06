@@ -1,6 +1,7 @@
 {{- range $path, $_ := .Files.Glob "applications/*/Chart.yaml" }}
 {{- $app := $.Files.Get $path | fromYaml }}
 {{- range $env_name, $env := $.Values.envs }}
+{{- if ne $env.enabled false }}
 {{- if $env.isEphemeral }}
 ---
 apiVersion: kargo.akuity.io/v1alpha1
@@ -115,6 +116,7 @@ spec:
         config:
           repoURL: "{{`${{ vars.gitRepo }}`}}"
           prNumber: "{{`${{ outputs.promotion.prNumber }}`}}"
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

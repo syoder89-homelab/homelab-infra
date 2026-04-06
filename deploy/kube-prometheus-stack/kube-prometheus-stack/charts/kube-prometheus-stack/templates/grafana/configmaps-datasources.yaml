@@ -1,0 +1,60 @@
+---
+# Source: kube-prometheus-stack/charts/kube-prometheus-stack/templates/grafana/configmaps-datasources.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kube-prometheus-stack-grafana-datasource
+  namespace: observability
+  labels:
+    grafana_datasource: "1"
+    app: kube-prometheus-stack-grafana
+    
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: kube-prometheus-stack
+    app.kubernetes.io/version: "83.0.0"
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    chart: kube-prometheus-stack-83.0.0
+    release: "kube-prometheus-stack"
+    heritage: "Helm"
+data:
+  datasource.yaml: |-
+    apiVersion: 1
+    datasources:
+    - name: "Prometheus"
+      type: prometheus
+      uid: prometheus
+      url: http://kube-prometheus-stack-prometheus.observability:9090/
+      access: proxy
+      isDefault: true
+      jsonData:
+        httpMethod: POST
+        timeInterval: 30s
+    - name: "Alertmanager"
+      type: alertmanager
+      uid: alertmanager
+      url: http://kube-prometheus-stack-alertmanager.observability:9093/
+      access: proxy
+      jsonData:
+        handleGrafanaManagedAlerts: false
+        implementation: prometheus
+    - access: proxy
+      isDefault: false
+      name: Loki
+      type: loki
+      uid: loki
+      url: http://loki.observability:3100
+    - access: proxy
+      isDefault: false
+      jsonData:
+        serviceMap:
+          datasourceUid: prometheus
+        tracesToLogsV2:
+          datasourceUid: loki
+          filterBySpanID: false
+          filterByTraceID: true
+          spanEndTimeShift: 1h
+          spanStartTimeShift: -1h
+      name: Tempo
+      type: tempo
+      uid: tempo
+      url: http://tempo.observability:3200

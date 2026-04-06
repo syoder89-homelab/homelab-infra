@@ -1,0 +1,25 @@
+---
+# Source: grafana-alloy/charts/alloy/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-alloy
+  namespace: observability
+  labels:
+    helm.sh/chart: alloy-1.7.0
+    app.kubernetes.io/name: alloy
+    app.kubernetes.io/instance: grafana-alloy
+    app.kubernetes.io/version: "v1.15.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: alloy
+    app.kubernetes.io/component: networking
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: alloy
+    app.kubernetes.io/instance: grafana-alloy
+  ports:
+    - name: http-metrics
+      port: 12345
+      targetPort: 12345
+      protocol: "TCP"

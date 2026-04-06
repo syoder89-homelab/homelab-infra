@@ -64,6 +64,90 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
+  name: prod-grafana-alloy
+  namespace: argocd
+  annotations:
+    kargo.akuity.io/authorized-stage: homelab-infra:prod-grafana-alloy
+spec:
+  destination:
+    name: in-cluster
+    namespace: observability
+  project: infra
+  source:
+    directory:
+      recurse: true
+    path: deploy/
+    repoURL: https://github.com/syoder89-homelab/homelab-infra
+    targetRevision: env/prod/grafana-alloy
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
+    - ClientSideApplyMigration=false
+---
+# Source: application-generator/templates/application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prod-kube-prometheus-stack
+  namespace: argocd
+  annotations:
+    kargo.akuity.io/authorized-stage: homelab-infra:prod-kube-prometheus-stack
+spec:
+  destination:
+    name: in-cluster
+    namespace: observability
+  project: infra
+  source:
+    directory:
+      recurse: true
+    path: deploy/
+    repoURL: https://github.com/syoder89-homelab/homelab-infra
+    targetRevision: env/prod/kube-prometheus-stack
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
+    - ClientSideApplyMigration=false
+---
+# Source: application-generator/templates/application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prod-loki
+  namespace: argocd
+  annotations:
+    kargo.akuity.io/authorized-stage: homelab-infra:prod-loki
+spec:
+  destination:
+    name: in-cluster
+    namespace: observability
+  project: infra
+  source:
+    directory:
+      recurse: true
+    path: deploy/
+    repoURL: https://github.com/syoder89-homelab/homelab-infra
+    targetRevision: env/prod/loki
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
+    - ClientSideApplyMigration=false
+---
+# Source: application-generator/templates/application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
   name: prod-onepassword-connect
   namespace: argocd
   annotations:
@@ -79,6 +163,34 @@ spec:
     path: deploy/
     repoURL: https://github.com/syoder89-homelab/homelab-infra
     targetRevision: env/prod/onepassword-connect
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
+    - ClientSideApplyMigration=false
+---
+# Source: application-generator/templates/application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prod-tempo
+  namespace: argocd
+  annotations:
+    kargo.akuity.io/authorized-stage: homelab-infra:prod-tempo
+spec:
+  destination:
+    name: in-cluster
+    namespace: observability
+  project: infra
+  source:
+    directory:
+      recurse: true
+    path: deploy/
+    repoURL: https://github.com/syoder89-homelab/homelab-infra
+    targetRevision: env/prod/tempo
   syncPolicy:
     automated:
       prune: true

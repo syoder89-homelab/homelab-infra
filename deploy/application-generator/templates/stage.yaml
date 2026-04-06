@@ -165,6 +165,249 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
+  name: prod-grafana-alloy
+  namespace: homelab-infra
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: grafana-alloy
+    sources:
+      direct: true
+
+  promotionTemplate:
+    spec:
+      vars:
+      - name: gitRepo
+        value: https://github.com/syoder89-homelab/homelab-infra
+      - name: targetBranch
+        value: env/prod/grafana-alloy
+      - name: path_src
+        value: ./src
+      - name: path_out
+        value: ./out
+      steps:
+      - task:
+          name: prepare-workdir 
+      # The config-generator chart needs access to the config manifests
+      # Copy config manifests into config-generator chart
+      - uses: copy
+        config:
+          inPath: ${{ vars.path_src }}/config
+          outPath: ${{ vars.path_src }}/charts/config-generator/config/platform
+      - uses: copy
+        config:
+          inPath: ${{ vars.path_src }}/applications/grafana-alloy/config
+          outPath: ${{ vars.path_src }}/charts/config-generator/config/application
+      # Render the config files from templates
+      - uses: helm-template
+        config:
+          releaseName: config-generator
+          path: ${{ vars.path_src }}/charts/config-generator
+          outLayout: flat
+          outPath: /tmp/values.yaml
+          setValues:
+            - key: envName
+              value: prod
+            - key: envType
+              value: prod
+            - key: appName
+              value: grafana-alloy
+          #valuesFiles:
+          #- ${{ vars.path_src }}/config/prod/grafana-alloy-values.yaml
+          #- ${{ vars.path_src }}/applications/grafana-alloy/values/prod.yaml
+      - uses: helm-template
+        config:
+          releaseName: grafana-alloy
+          namespace: observability
+          buildDependencies: true
+          includeCRDs: true
+          path: ${{ vars.path_src }}/applications/grafana-alloy
+          outPath: ${{ vars.path_out }}/deploy/grafana-alloy
+          valuesFiles:
+          - /tmp/values.yaml
+      - task:
+          name: push-manifests
+        as: promotion
+        vars:
+        - name: asPR
+          value: "true"
+        - name: targetBranch
+          value: env/prod/grafana-alloy
+      - uses: argocd-update
+        config:
+          apps:
+          - name: prod-grafana-alloy
+            sources:
+            - repoURL: ${{ vars.gitRepo }}
+              desiredRevision: ${{ outputs.promotion.commit }}
+---
+# Source: application-generator/templates/stage.yaml
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: prod-kube-prometheus-stack
+  namespace: homelab-infra
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: kube-prometheus-stack
+    sources:
+      direct: true
+
+  promotionTemplate:
+    spec:
+      vars:
+      - name: gitRepo
+        value: https://github.com/syoder89-homelab/homelab-infra
+      - name: targetBranch
+        value: env/prod/kube-prometheus-stack
+      - name: path_src
+        value: ./src
+      - name: path_out
+        value: ./out
+      steps:
+      - task:
+          name: prepare-workdir 
+      # The config-generator chart needs access to the config manifests
+      # Copy config manifests into config-generator chart
+      - uses: copy
+        config:
+          inPath: ${{ vars.path_src }}/config
+          outPath: ${{ vars.path_src }}/charts/config-generator/config/platform
+      - uses: copy
+        config:
+          inPath: ${{ vars.path_src }}/applications/kube-prometheus-stack/config
+          outPath: ${{ vars.path_src }}/charts/config-generator/config/application
+      # Render the config files from templates
+      - uses: helm-template
+        config:
+          releaseName: config-generator
+          path: ${{ vars.path_src }}/charts/config-generator
+          outLayout: flat
+          outPath: /tmp/values.yaml
+          setValues:
+            - key: envName
+              value: prod
+            - key: envType
+              value: prod
+            - key: appName
+              value: kube-prometheus-stack
+          #valuesFiles:
+          #- ${{ vars.path_src }}/config/prod/kube-prometheus-stack-values.yaml
+          #- ${{ vars.path_src }}/applications/kube-prometheus-stack/values/prod.yaml
+      - uses: helm-template
+        config:
+          releaseName: kube-prometheus-stack
+          namespace: observability
+          buildDependencies: true
+          includeCRDs: true
+          path: ${{ vars.path_src }}/applications/kube-prometheus-stack
+          outPath: ${{ vars.path_out }}/deploy/kube-prometheus-stack
+          valuesFiles:
+          - /tmp/values.yaml
+      - task:
+          name: push-manifests
+        as: promotion
+        vars:
+        - name: asPR
+          value: "true"
+        - name: targetBranch
+          value: env/prod/kube-prometheus-stack
+      - uses: argocd-update
+        config:
+          apps:
+          - name: prod-kube-prometheus-stack
+            sources:
+            - repoURL: ${{ vars.gitRepo }}
+              desiredRevision: ${{ outputs.promotion.commit }}
+---
+# Source: application-generator/templates/stage.yaml
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: prod-loki
+  namespace: homelab-infra
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: loki
+    sources:
+      direct: true
+
+  promotionTemplate:
+    spec:
+      vars:
+      - name: gitRepo
+        value: https://github.com/syoder89-homelab/homelab-infra
+      - name: targetBranch
+        value: env/prod/loki
+      - name: path_src
+        value: ./src
+      - name: path_out
+        value: ./out
+      steps:
+      - task:
+          name: prepare-workdir 
+      # The config-generator chart needs access to the config manifests
+      # Copy config manifests into config-generator chart
+      - uses: copy
+        config:
+          inPath: ${{ vars.path_src }}/config
+          outPath: ${{ vars.path_src }}/charts/config-generator/config/platform
+      - uses: copy
+        config:
+          inPath: ${{ vars.path_src }}/applications/loki/config
+          outPath: ${{ vars.path_src }}/charts/config-generator/config/application
+      # Render the config files from templates
+      - uses: helm-template
+        config:
+          releaseName: config-generator
+          path: ${{ vars.path_src }}/charts/config-generator
+          outLayout: flat
+          outPath: /tmp/values.yaml
+          setValues:
+            - key: envName
+              value: prod
+            - key: envType
+              value: prod
+            - key: appName
+              value: loki
+          #valuesFiles:
+          #- ${{ vars.path_src }}/config/prod/loki-values.yaml
+          #- ${{ vars.path_src }}/applications/loki/values/prod.yaml
+      - uses: helm-template
+        config:
+          releaseName: loki
+          namespace: observability
+          buildDependencies: true
+          includeCRDs: true
+          path: ${{ vars.path_src }}/applications/loki
+          outPath: ${{ vars.path_out }}/deploy/loki
+          valuesFiles:
+          - /tmp/values.yaml
+      - task:
+          name: push-manifests
+        as: promotion
+        vars:
+        - name: asPR
+          value: "true"
+        - name: targetBranch
+          value: env/prod/loki
+      - uses: argocd-update
+        config:
+          apps:
+          - name: prod-loki
+            sources:
+            - repoURL: ${{ vars.gitRepo }}
+              desiredRevision: ${{ outputs.promotion.commit }}
+---
+# Source: application-generator/templates/stage.yaml
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
   name: prod-onepassword-connect
   namespace: homelab-infra
 spec:
@@ -238,6 +481,87 @@ spec:
         config:
           apps:
           - name: prod-onepassword-connect
+            sources:
+            - repoURL: ${{ vars.gitRepo }}
+              desiredRevision: ${{ outputs.promotion.commit }}
+---
+# Source: application-generator/templates/stage.yaml
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: prod-tempo
+  namespace: homelab-infra
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: tempo
+    sources:
+      direct: true
+
+  promotionTemplate:
+    spec:
+      vars:
+      - name: gitRepo
+        value: https://github.com/syoder89-homelab/homelab-infra
+      - name: targetBranch
+        value: env/prod/tempo
+      - name: path_src
+        value: ./src
+      - name: path_out
+        value: ./out
+      steps:
+      - task:
+          name: prepare-workdir 
+      # The config-generator chart needs access to the config manifests
+      # Copy config manifests into config-generator chart
+      - uses: copy
+        config:
+          inPath: ${{ vars.path_src }}/config
+          outPath: ${{ vars.path_src }}/charts/config-generator/config/platform
+      - uses: copy
+        config:
+          inPath: ${{ vars.path_src }}/applications/tempo/config
+          outPath: ${{ vars.path_src }}/charts/config-generator/config/application
+      # Render the config files from templates
+      - uses: helm-template
+        config:
+          releaseName: config-generator
+          path: ${{ vars.path_src }}/charts/config-generator
+          outLayout: flat
+          outPath: /tmp/values.yaml
+          setValues:
+            - key: envName
+              value: prod
+            - key: envType
+              value: prod
+            - key: appName
+              value: tempo
+          #valuesFiles:
+          #- ${{ vars.path_src }}/config/prod/tempo-values.yaml
+          #- ${{ vars.path_src }}/applications/tempo/values/prod.yaml
+      - uses: helm-template
+        config:
+          releaseName: tempo
+          namespace: observability
+          buildDependencies: true
+          includeCRDs: true
+          path: ${{ vars.path_src }}/applications/tempo
+          outPath: ${{ vars.path_out }}/deploy/tempo
+          valuesFiles:
+          - /tmp/values.yaml
+      - task:
+          name: push-manifests
+        as: promotion
+        vars:
+        - name: asPR
+          value: "true"
+        - name: targetBranch
+          value: env/prod/tempo
+      - uses: argocd-update
+        config:
+          apps:
+          - name: prod-tempo
             sources:
             - repoURL: ${{ vars.gitRepo }}
               desiredRevision: ${{ outputs.promotion.commit }}

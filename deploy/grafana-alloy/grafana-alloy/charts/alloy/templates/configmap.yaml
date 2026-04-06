@@ -1,0 +1,91 @@
+---
+# Source: grafana-alloy/charts/alloy/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-alloy
+  namespace: observability
+  labels:
+    helm.sh/chart: alloy-1.7.0
+    app.kubernetes.io/name: alloy
+    app.kubernetes.io/instance: grafana-alloy
+    app.kubernetes.io/version: "v1.15.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: alloy
+    app.kubernetes.io/component: config
+data:
+  config.alloy: |-
+    // ─── Pod Log Collection ──────────────────────────────────────────────
+    discovery.kubernetes "pods" {
+      role = "pod"
+    }
+    
+    discovery.relabel "pod_logs" {
+      targets = discovery.kubernetes.pods.targets
+    
+      rule {
+        source_labels = ["__meta_kubernetes_namespace"]
+        target_label  = "namespace"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_pod_name"]
+        target_label  = "pod"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_pod_container_name"]
+        target_label  = "container"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_pod_node_name"]
+        target_label  = "node"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_name"]
+        separator     = "/"
+        target_label  = "job"
+      }
+    }
+    
+    loki.source.kubernetes "pods" {
+      targets    = discovery.relabel.pod_logs.output
+      forward_to = [loki.write.default.receiver]
+    }
+    
+    loki.write "default" {
+      endpoint {
+        url = "http://loki.observability:3100/loki/api/v1/push"
+      }
+    }
+    
+    // ─── OTLP Receiver (traces + metrics from instrumented apps) ─────────
+    otelcol.receiver.otlp "default" {
+      grpc {
+        endpoint = "0.0.0.0:4317"
+      }
+      http {
+        endpoint = "0.0.0.0:4318"
+      }
+      output {
+        traces  = [otelcol.exporter.otlp.tempo.input]
+        metrics = [otelcol.exporter.prometheus.default.input]
+      }
+    }
+    
+    otelcol.exporter.otlp "tempo" {
+      client {
+        endpoint = "tempo.observability:4317"
+        tls {
+          insecure = true
+        }
+      }
+    }
+    
+    otelcol.exporter.prometheus "default" {
+      forward_to = [prometheus.remote_write.default.receiver]
+    }
+    
+    prometheus.remote_write "default" {
+      endpoint {
+        url = "http://prometheus-operated.observability:9090/api/v1/write"
+      }
+    }

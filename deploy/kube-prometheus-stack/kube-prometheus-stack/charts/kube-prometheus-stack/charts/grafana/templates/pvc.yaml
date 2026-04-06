@@ -1,0 +1,21 @@
+---
+# Source: kube-prometheus-stack/charts/kube-prometheus-stack/charts/grafana/templates/pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kube-prometheus-stack-grafana
+  namespace: observability
+  labels:
+    helm.sh/chart: grafana-11.3.7
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: kube-prometheus-stack
+    app.kubernetes.io/version: "12.4.2"
+  finalizers:
+    - kubernetes.io/pvc-protection
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "5Gi"
+  storageClassName: openebs-storage-persist

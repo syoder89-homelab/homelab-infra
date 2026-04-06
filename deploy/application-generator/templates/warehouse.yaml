@@ -41,6 +41,63 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
 metadata:
+  name: grafana-alloy
+  namespace: homelab-infra
+spec:
+  subscriptions:
+  - git:
+      branch: main
+      commitSelectionStrategy: NewestFromBranch
+      discoveryLimit: 10
+      strictSemvers: true
+      repoURL: https://github.com/syoder89-homelab/homelab-infra.git
+      includePaths:
+      - applications/grafana-alloy
+      # Alternate config strategy
+      #- stages/**/grafana-alloy-values.yaml
+---
+# Source: application-generator/templates/warehouse.yaml
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: kube-prometheus-stack
+  namespace: homelab-infra
+spec:
+  subscriptions:
+  - git:
+      branch: main
+      commitSelectionStrategy: NewestFromBranch
+      discoveryLimit: 10
+      strictSemvers: true
+      repoURL: https://github.com/syoder89-homelab/homelab-infra.git
+      includePaths:
+      - applications/kube-prometheus-stack
+      # Alternate config strategy
+      #- stages/**/kube-prometheus-stack-values.yaml
+---
+# Source: application-generator/templates/warehouse.yaml
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: loki
+  namespace: homelab-infra
+spec:
+  subscriptions:
+  - git:
+      branch: main
+      commitSelectionStrategy: NewestFromBranch
+      discoveryLimit: 10
+      strictSemvers: true
+      repoURL: https://github.com/syoder89-homelab/homelab-infra.git
+      includePaths:
+      - applications/loki
+      # Alternate config strategy
+      #- stages/**/loki-values.yaml
+---
+# Source: application-generator/templates/warehouse.yaml
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
   name: onepassword-connect
   namespace: homelab-infra
 spec:
@@ -55,3 +112,22 @@ spec:
       - applications/onepassword-connect
       # Alternate config strategy
       #- stages/**/onepassword-connect-values.yaml
+---
+# Source: application-generator/templates/warehouse.yaml
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: tempo
+  namespace: homelab-infra
+spec:
+  subscriptions:
+  - git:
+      branch: main
+      commitSelectionStrategy: NewestFromBranch
+      discoveryLimit: 10
+      strictSemvers: true
+      repoURL: https://github.com/syoder89-homelab/homelab-infra.git
+      includePaths:
+      - applications/tempo
+      # Alternate config strategy
+      #- stages/**/tempo-values.yaml

@@ -49,25 +49,25 @@ spec:
       #     apps:
       #     - name: {{ $env_name }}-{{ $app.name }}
       #       sources:
-      #       - repoURL: {{`${{ vars.gitRepo }}`}}
-      #         desiredRevision: {{`${{ outputs.promotion-orig.commit }}`}}
+      #       - repoURL: "{% vars.gitRepo %}"
+      #         desiredRevision: "{% outputs.promotion-orig.commit %}"
       - task:
           name: prepare-workdir 
       # The config-generator chart needs access to the config manifests
       # Copy config manifests into config-generator chart
       - uses: copy
         config:
-          inPath: "{{`${{ vars.path_src }}`}}/config"
-          outPath: "{{`${{ vars.path_src }}`}}/charts/config-generator/config/platform"
+          inPath: "{% vars.path_src %}/config"
+          outPath: "{% vars.path_src %}/charts/config-generator/config/platform"
       - uses: copy
         config:
-          inPath: "{{`${{ vars.path_src }}`}}/{{ dir $path }}/config"
-          outPath: "{{`${{ vars.path_src }}`}}/charts/config-generator/config/application"
+          inPath: "{% vars.path_src %}/{{ dir $path }}/config"
+          outPath: "{% vars.path_src %}/charts/config-generator/config/application"
       # Render the config files from templates
       - uses: helm-template
         config:
           releaseName: config-generator
-          path: "{{`${{ vars.path_src }}`}}/charts/config-generator"
+          path: "{% vars.path_src %}/charts/config-generator"
           outLayout: flat
           outPath: /tmp/values.yaml
           setValues:
@@ -78,16 +78,16 @@ spec:
             - key: appName
               value: {{ $app.name }}
           #valuesFiles:
-          #- {{`${{ vars.path_src }}`}}/config/{{ $env_name }}/{{ $app.name }}-values.yaml
-          #- {{`${{ vars.path_src }}`}}/{{ dir $path }}/values/{{ $env_name }}.yaml
+          #- "{% vars.path_src %}/config/{{ $env_name }}/{{ $app.name }}-values.yaml"
+          #- "{% vars.path_src %}/{{ dir $path }}/values/{{ $env_name }}.yaml"
       - uses: helm-template
         config:
           releaseName: "{{ $env_name }}-{{ $app.releaseName | default $app.name }}"
           namespace: "{{ $env_name }}-{{ $app.namespace | default $app.name }}"
           buildDependencies: true
           includeCRDs: true
-          path: "{{`${{ vars.path_src }}`}}/{{ dir $path }}"
-          outPath: "{{`${{ vars.path_out }}`}}/deploy/{{ $app.name }}"
+          path: "{% vars.path_src %}/{{ dir $path }}"
+          outPath: "{% vars.path_out %}/deploy/{{ $app.name }}"
           valuesFiles:
           - /tmp/values.yaml
       - task:
@@ -101,21 +101,21 @@ spec:
         - name: targetBranch
           value: "{{ $env.targetBranchPrefix }}/{{ $app.name }}"
       - uses: argocd-update
-        if: {{`${{ outputs.promotion.prNumber != "" }}`}}
+        if: "{% outputs.promotion.prNumber != \"\" %}"
         retry:
           errorThreshold: 5
         config:
           apps:
-          - name: "pr-{{`${{ outputs.promotion.prNumber }}`}}-{{ $env_name }}-{{ $app.name }}"
+          - name: "pr-{% outputs.promotion.prNumber %}-{{ $env_name }}-{{ $app.name }}"
             sources:
-            - repoURL: "{{`${{ vars.gitRepo }}`}}"
-              desiredRevision: "{{`${{ outputs.promotion.commit }}`}}"
+            - repoURL: "{% vars.gitRepo %}"
+              desiredRevision: "{% outputs.promotion.commit %}"
       - uses: git-wait-for-pr
         as: wait-for-pr
-        if: {{`${{ outputs.promotion.prNumber != "" }}`}}
+        if: "{% outputs.promotion.prNumber != \"\" %}"
         config:
-          repoURL: "{{`${{ vars.gitRepo }}`}}"
-          prNumber: "{{`${{ outputs.promotion.prNumber }}`}}"
+          repoURL: "{% vars.gitRepo %}"
+          prNumber: "{% outputs.promotion.prNumber %}"
 {{- end }}
 {{- end }}
 {{- end }}

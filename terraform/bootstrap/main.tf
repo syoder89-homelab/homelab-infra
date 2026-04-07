@@ -21,12 +21,17 @@ resource "google_iam_workload_identity_pool_provider" "github" {
     "google.subject"       = "assertion.sub"
     "attribute.actor"      = "assertion.actor"
     "attribute.repository" = "assertion.repository"
+    "attribute.ref"        = "assertion.ref"
   }
 
-  attribute_condition = join(" || ", [
-    for repo in var.github_repos :
-    "assertion.repository == \"${var.github_org}/${repo}\""
-  ])
+  attribute_condition = join(" || ", concat(
+    [for repo in var.unrestricted_repos :
+      "assertion.repository == \"${var.github_org}/${repo}\""
+    ],
+    [for repo in var.main_only_repos :
+      "(assertion.repository == \"${var.github_org}/${repo}\" && assertion.ref == \"refs/heads/main\")"
+    ]
+  ))
 
   oidc {
     issuer_uri = "https://token.actions.githubusercontent.com"
@@ -66,9 +71,12 @@ resource "google_project_iam_member" "gke_deployer_storage" {
   member  = "serviceAccount:${google_service_account.gke_deployer.email}"
 }
 
-# Allow GitHub repos to impersonate the service account
+# Allow only GKE-managing repos to impersonate the gke-deployer SA.
+# tank-monitor and tasmota-monitor pass the attribute_condition above
+# (can exchange tokens) but are NOT in this set — their builder SAs
+# are bound separately in the artifact-registry/ module.
 resource "google_service_account_iam_member" "github_actions_wif" {
-  for_each = toset(var.github_repos)
+  for_each = toset(var.gke_deployer_repos)
 
   service_account_id = google_service_account.gke_deployer.name
   role               = "roles/iam.workloadIdentityUser"

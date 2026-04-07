@@ -15,8 +15,20 @@ variable "github_org" {
   default     = "syoder89-homelab"
 }
 
-variable "github_repos" {
-  description = "GitHub repos allowed to authenticate via Workload Identity Federation"
+variable "unrestricted_repos" {
+  description = "GitHub repos allowed to exchange OIDC tokens on any ref (e.g. GKE management workflows)"
+  type        = list(string)
+  default     = ["homelab-infra", "homelab-apps"]
+}
+
+variable "main_only_repos" {
+  description = "GitHub repos allowed to exchange OIDC tokens on refs/heads/main only (e.g. image builders)"
+  type        = list(string)
+  default     = ["tank-monitor", "tasmota-monitor"]
+}
+
+variable "gke_deployer_repos" {
+  description = "GitHub repos allowed to impersonate the gke-deployer SA (subset of unrestricted_repos)"
   type        = list(string)
   default     = ["homelab-infra", "homelab-apps"]
 }

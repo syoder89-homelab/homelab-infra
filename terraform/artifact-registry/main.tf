@@ -70,6 +70,24 @@ resource "google_artifact_registry_repository_iam_member" "tasmota_monitor_write
   member     = "serviceAccount:${google_service_account.tasmota_monitor_builder.email}"
 }
 
+# --- Public read access (images are not sensitive, eliminates pull secrets and Kargo credentials) ---
+
+resource "google_artifact_registry_repository_iam_member" "tank_monitor_public_reader" {
+  project    = var.project_id
+  location   = var.location
+  repository = google_artifact_registry_repository.tank_monitor.name
+  role       = "roles/artifactregistry.reader"
+  member     = "allUsers"
+}
+
+resource "google_artifact_registry_repository_iam_member" "tasmota_monitor_public_reader" {
+  project    = var.project_id
+  location   = var.location
+  repository = google_artifact_registry_repository.tasmota_monitor.name
+  role       = "roles/artifactregistry.reader"
+  member     = "allUsers"
+}
+
 # --- Allow GitHub Actions to impersonate each SA ---
 #
 # The principalSet scopes to the specific repo, so only tokens from

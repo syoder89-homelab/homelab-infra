@@ -89,6 +89,10 @@ alloy:
       cpu: 50m
       memory: 128Mi
 
+  # ── Service (expose Alloy debug UI) ────────────────────────────────────────
+  service:
+    type: LoadBalancer
+
   # ── RBAC (required for discovery.kubernetes and loki.source.kubernetes) ────
   rbac:
     create: true

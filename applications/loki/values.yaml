@@ -44,6 +44,13 @@ loki:
   backend:
     replicas: 0
 
+  # ── Chunks Cache (memcached) ─────────────────────────────────────────────────
+  # allocatedMemory is in MB; chart sets memory limit to floor(1.2 * allocatedMemory)
+  # 5120 MB * 1.2 = 6144 MB = 6 Gi
+  chunksCache:
+    allocatedMemory: 5120
+    allocatedCPU: 100m
+
   # ── Disable MinIO (using local filesystem) ───────────────────────────────────
   minio:
     enabled: false

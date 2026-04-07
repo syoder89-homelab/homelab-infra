@@ -31,17 +31,17 @@ spec:
       # Copy config manifests into config-generator chart
       - uses: copy
         config:
-          inPath: ${{ vars.path_src }}/config
-          outPath: ${{ vars.path_src }}/charts/config-generator/config/platform
+          inPath: "${% vars.path_src %}/config"
+          outPath: "${% vars.path_src %}/charts/config-generator/config/platform"
       - uses: copy
         config:
-          inPath: ${{ vars.path_src }}/applications/calico/config
-          outPath: ${{ vars.path_src }}/charts/config-generator/config/application
+          inPath: "${% vars.path_src %}/applications/calico/config"
+          outPath: "${% vars.path_src %}/charts/config-generator/config/application"
       # Render the config files from templates
       - uses: helm-template
         config:
           releaseName: config-generator
-          path: ${{ vars.path_src }}/charts/config-generator
+          path: "${% vars.path_src %}/charts/config-generator"
           outLayout: flat
           outPath: /tmp/values.yaml
           setValues:
@@ -52,16 +52,16 @@ spec:
             - key: appName
               value: calico
           #valuesFiles:
-          #- ${{ vars.path_src }}/config/prod/calico-values.yaml
-          #- ${{ vars.path_src }}/applications/calico/values/prod.yaml
+          #- "${% vars.path_src %}/config/prod/calico-values.yaml"
+          #- "${% vars.path_src %}/applications/calico/values/prod.yaml"
       - uses: helm-template
         config:
           releaseName: calico
           namespace: tigera-operator
           buildDependencies: true
           includeCRDs: true
-          path: ${{ vars.path_src }}/applications/calico
-          outPath: ${{ vars.path_out }}/deploy/calico
+          path: "${% vars.path_src %}/applications/calico"
+          outPath: "${% vars.path_out %}/deploy/calico"
           valuesFiles:
           - /tmp/values.yaml
       - task:
@@ -77,8 +77,8 @@ spec:
           apps:
           - name: prod-calico
             sources:
-            - repoURL: ${{ vars.gitRepo }}
-              desiredRevision: ${{ outputs.promotion.commit }}
+            - repoURL: "${% vars.gitRepo %}"
+              desiredRevision: "${% outputs.promotion.commit %}"
 ---
 # Source: application-generator/templates/stage.yaml
 apiVersion: kargo.akuity.io/v1alpha1
@@ -112,17 +112,17 @@ spec:
       # Copy config manifests into config-generator chart
       - uses: copy
         config:
-          inPath: ${{ vars.path_src }}/config
-          outPath: ${{ vars.path_src }}/charts/config-generator/config/platform
+          inPath: "${% vars.path_src %}/config"
+          outPath: "${% vars.path_src %}/charts/config-generator/config/platform"
       - uses: copy
         config:
-          inPath: ${{ vars.path_src }}/applications/cert-manager/config
-          outPath: ${{ vars.path_src }}/charts/config-generator/config/application
+          inPath: "${% vars.path_src %}/applications/cert-manager/config"
+          outPath: "${% vars.path_src %}/charts/config-generator/config/application"
       # Render the config files from templates
       - uses: helm-template
         config:
           releaseName: config-generator
-          path: ${{ vars.path_src }}/charts/config-generator
+          path: "${% vars.path_src %}/charts/config-generator"
           outLayout: flat
           outPath: /tmp/values.yaml
           setValues:
@@ -133,16 +133,16 @@ spec:
             - key: appName
               value: cert-manager
           #valuesFiles:
-          #- ${{ vars.path_src }}/config/prod/cert-manager-values.yaml
-          #- ${{ vars.path_src }}/applications/cert-manager/values/prod.yaml
+          #- "${% vars.path_src %}/config/prod/cert-manager-values.yaml"
+          #- "${% vars.path_src %}/applications/cert-manager/values/prod.yaml"
       - uses: helm-template
         config:
           releaseName: cert-manager
           namespace: cert-manager
           buildDependencies: true
           includeCRDs: true
-          path: ${{ vars.path_src }}/applications/cert-manager
-          outPath: ${{ vars.path_out }}/deploy/cert-manager
+          path: "${% vars.path_src %}/applications/cert-manager"
+          outPath: "${% vars.path_out %}/deploy/cert-manager"
           valuesFiles:
           - /tmp/values.yaml
       - task:
@@ -158,8 +158,8 @@ spec:
           apps:
           - name: prod-cert-manager
             sources:
-            - repoURL: ${{ vars.gitRepo }}
-              desiredRevision: ${{ outputs.promotion.commit }}
+            - repoURL: "${% vars.gitRepo %}"
+              desiredRevision: "${% outputs.promotion.commit %}"
 ---
 # Source: application-generator/templates/stage.yaml
 apiVersion: kargo.akuity.io/v1alpha1
@@ -193,17 +193,17 @@ spec:
       # Copy config manifests into config-generator chart
       - uses: copy
         config:
-          inPath: ${{ vars.path_src }}/config
-          outPath: ${{ vars.path_src }}/charts/config-generator/config/platform
+          inPath: "${% vars.path_src %}/config"
+          outPath: "${% vars.path_src %}/charts/config-generator/config/platform"
       - uses: copy
         config:
-          inPath: ${{ vars.path_src }}/applications/grafana-alloy/config
-          outPath: ${{ vars.path_src }}/charts/config-generator/config/application
+          inPath: "${% vars.path_src %}/applications/grafana-alloy/config"
+          outPath: "${% vars.path_src %}/charts/config-generator/config/application"
       # Render the config files from templates
       - uses: helm-template
         config:
           releaseName: config-generator
-          path: ${{ vars.path_src }}/charts/config-generator
+          path: "${% vars.path_src %}/charts/config-generator"
           outLayout: flat
           outPath: /tmp/values.yaml
           setValues:
@@ -214,16 +214,16 @@ spec:
             - key: appName
               value: grafana-alloy
           #valuesFiles:
-          #- ${{ vars.path_src }}/config/prod/grafana-alloy-values.yaml
-          #- ${{ vars.path_src }}/applications/grafana-alloy/values/prod.yaml
+          #- "${% vars.path_src %}/config/prod/grafana-alloy-values.yaml"
+          #- "${% vars.path_src %}/applications/grafana-alloy/values/prod.yaml"
       - uses: helm-template
         config:
           releaseName: grafana-alloy
           namespace: observability
           buildDependencies: true
           includeCRDs: true
-          path: ${{ vars.path_src }}/applications/grafana-alloy
-          outPath: ${{ vars.path_out }}/deploy/grafana-alloy
+          path: "${% vars.path_src %}/applications/grafana-alloy"
+          outPath: "${% vars.path_out %}/deploy/grafana-alloy"
           valuesFiles:
           - /tmp/values.yaml
       - task:
@@ -239,8 +239,8 @@ spec:
           apps:
           - name: prod-grafana-alloy
             sources:
-            - repoURL: ${{ vars.gitRepo }}
-              desiredRevision: ${{ outputs.promotion.commit }}
+            - repoURL: "${% vars.gitRepo %}"
+              desiredRevision: "${% outputs.promotion.commit %}"
 ---
 # Source: application-generator/templates/stage.yaml
 apiVersion: kargo.akuity.io/v1alpha1
@@ -274,17 +274,17 @@ spec:
       # Copy config manifests into config-generator chart
       - uses: copy
         config:
-          inPath: ${{ vars.path_src }}/config
-          outPath: ${{ vars.path_src }}/charts/config-generator/config/platform
+          inPath: "${% vars.path_src %}/config"
+          outPath: "${% vars.path_src %}/charts/config-generator/config/platform"
       - uses: copy
         config:
-          inPath: ${{ vars.path_src }}/applications/kube-prometheus-stack/config
-          outPath: ${{ vars.path_src }}/charts/config-generator/config/application
+          inPath: "${% vars.path_src %}/applications/kube-prometheus-stack/config"
+          outPath: "${% vars.path_src %}/charts/config-generator/config/application"
       # Render the config files from templates
       - uses: helm-template
         config:
           releaseName: config-generator
-          path: ${{ vars.path_src }}/charts/config-generator
+          path: "${% vars.path_src %}/charts/config-generator"
           outLayout: flat
           outPath: /tmp/values.yaml
           setValues:
@@ -295,16 +295,16 @@ spec:
             - key: appName
               value: kube-prometheus-stack
           #valuesFiles:
-          #- ${{ vars.path_src }}/config/prod/kube-prometheus-stack-values.yaml
-          #- ${{ vars.path_src }}/applications/kube-prometheus-stack/values/prod.yaml
+          #- "${% vars.path_src %}/config/prod/kube-prometheus-stack-values.yaml"
+          #- "${% vars.path_src %}/applications/kube-prometheus-stack/values/prod.yaml"
       - uses: helm-template
         config:
           releaseName: kube-prometheus-stack
           namespace: observability
           buildDependencies: true
           includeCRDs: true
-          path: ${{ vars.path_src }}/applications/kube-prometheus-stack
-          outPath: ${{ vars.path_out }}/deploy/kube-prometheus-stack
+          path: "${% vars.path_src %}/applications/kube-prometheus-stack"
+          outPath: "${% vars.path_out %}/deploy/kube-prometheus-stack"
           valuesFiles:
           - /tmp/values.yaml
       - task:
@@ -320,8 +320,8 @@ spec:
           apps:
           - name: prod-kube-prometheus-stack
             sources:
-            - repoURL: ${{ vars.gitRepo }}
-              desiredRevision: ${{ outputs.promotion.commit }}
+            - repoURL: "${% vars.gitRepo %}"
+              desiredRevision: "${% outputs.promotion.commit %}"
 ---
 # Source: application-generator/templates/stage.yaml
 apiVersion: kargo.akuity.io/v1alpha1
@@ -355,17 +355,17 @@ spec:
       # Copy config manifests into config-generator chart
       - uses: copy
         config:
-          inPath: ${{ vars.path_src }}/config
-          outPath: ${{ vars.path_src }}/charts/config-generator/config/platform
+          inPath: "${% vars.path_src %}/config"
+          outPath: "${% vars.path_src %}/charts/config-generator/config/platform"
       - uses: copy
         config:
-          inPath: ${{ vars.path_src }}/applications/loki/config
-          outPath: ${{ vars.path_src }}/charts/config-generator/config/application
+          inPath: "${% vars.path_src %}/applications/loki/config"
+          outPath: "${% vars.path_src %}/charts/config-generator/config/application"
       # Render the config files from templates
       - uses: helm-template
         config:
           releaseName: config-generator
-          path: ${{ vars.path_src }}/charts/config-generator
+          path: "${% vars.path_src %}/charts/config-generator"
           outLayout: flat
           outPath: /tmp/values.yaml
           setValues:
@@ -376,16 +376,16 @@ spec:
             - key: appName
               value: loki
           #valuesFiles:
-          #- ${{ vars.path_src }}/config/prod/loki-values.yaml
-          #- ${{ vars.path_src }}/applications/loki/values/prod.yaml
+          #- "${% vars.path_src %}/config/prod/loki-values.yaml"
+          #- "${% vars.path_src %}/applications/loki/values/prod.yaml"
       - uses: helm-template
         config:
           releaseName: loki
           namespace: observability
           buildDependencies: true
           includeCRDs: true
-          path: ${{ vars.path_src }}/applications/loki
-          outPath: ${{ vars.path_out }}/deploy/loki
+          path: "${% vars.path_src %}/applications/loki"
+          outPath: "${% vars.path_out %}/deploy/loki"
           valuesFiles:
           - /tmp/values.yaml
       - task:
@@ -401,8 +401,8 @@ spec:
           apps:
           - name: prod-loki
             sources:
-            - repoURL: ${{ vars.gitRepo }}
-              desiredRevision: ${{ outputs.promotion.commit }}
+            - repoURL: "${% vars.gitRepo %}"
+              desiredRevision: "${% outputs.promotion.commit %}"
 ---
 # Source: application-generator/templates/stage.yaml
 apiVersion: kargo.akuity.io/v1alpha1
@@ -436,17 +436,17 @@ spec:
       # Copy config manifests into config-generator chart
       - uses: copy
         config:
-          inPath: ${{ vars.path_src }}/config
-          outPath: ${{ vars.path_src }}/charts/config-generator/config/platform
+          inPath: "${% vars.path_src %}/config"
+          outPath: "${% vars.path_src %}/charts/config-generator/config/platform"
       - uses: copy
         config:
-          inPath: ${{ vars.path_src }}/applications/onepassword-connect/config
-          outPath: ${{ vars.path_src }}/charts/config-generator/config/application
+          inPath: "${% vars.path_src %}/applications/onepassword-connect/config"
+          outPath: "${% vars.path_src %}/charts/config-generator/config/application"
       # Render the config files from templates
       - uses: helm-template
         config:
           releaseName: config-generator
-          path: ${{ vars.path_src }}/charts/config-generator
+          path: "${% vars.path_src %}/charts/config-generator"
           outLayout: flat
           outPath: /tmp/values.yaml
           setValues:
@@ -457,16 +457,16 @@ spec:
             - key: appName
               value: onepassword-connect
           #valuesFiles:
-          #- ${{ vars.path_src }}/config/prod/onepassword-connect-values.yaml
-          #- ${{ vars.path_src }}/applications/onepassword-connect/values/prod.yaml
+          #- "${% vars.path_src %}/config/prod/onepassword-connect-values.yaml"
+          #- "${% vars.path_src %}/applications/onepassword-connect/values/prod.yaml"
       - uses: helm-template
         config:
           releaseName: onepassword-connect
           namespace: onepassword-connect
           buildDependencies: true
           includeCRDs: true
-          path: ${{ vars.path_src }}/applications/onepassword-connect
-          outPath: ${{ vars.path_out }}/deploy/onepassword-connect
+          path: "${% vars.path_src %}/applications/onepassword-connect"
+          outPath: "${% vars.path_out %}/deploy/onepassword-connect"
           valuesFiles:
           - /tmp/values.yaml
       - task:
@@ -482,8 +482,8 @@ spec:
           apps:
           - name: prod-onepassword-connect
             sources:
-            - repoURL: ${{ vars.gitRepo }}
-              desiredRevision: ${{ outputs.promotion.commit }}
+            - repoURL: "${% vars.gitRepo %}"
+              desiredRevision: "${% outputs.promotion.commit %}"
 ---
 # Source: application-generator/templates/stage.yaml
 apiVersion: kargo.akuity.io/v1alpha1
@@ -517,17 +517,17 @@ spec:
       # Copy config manifests into config-generator chart
       - uses: copy
         config:
-          inPath: ${{ vars.path_src }}/config
-          outPath: ${{ vars.path_src }}/charts/config-generator/config/platform
+          inPath: "${% vars.path_src %}/config"
+          outPath: "${% vars.path_src %}/charts/config-generator/config/platform"
       - uses: copy
         config:
-          inPath: ${{ vars.path_src }}/applications/tempo/config
-          outPath: ${{ vars.path_src }}/charts/config-generator/config/application
+          inPath: "${% vars.path_src %}/applications/tempo/config"
+          outPath: "${% vars.path_src %}/charts/config-generator/config/application"
       # Render the config files from templates
       - uses: helm-template
         config:
           releaseName: config-generator
-          path: ${{ vars.path_src }}/charts/config-generator
+          path: "${% vars.path_src %}/charts/config-generator"
           outLayout: flat
           outPath: /tmp/values.yaml
           setValues:
@@ -538,16 +538,16 @@ spec:
             - key: appName
               value: tempo
           #valuesFiles:
-          #- ${{ vars.path_src }}/config/prod/tempo-values.yaml
-          #- ${{ vars.path_src }}/applications/tempo/values/prod.yaml
+          #- "${% vars.path_src %}/config/prod/tempo-values.yaml"
+          #- "${% vars.path_src %}/applications/tempo/values/prod.yaml"
       - uses: helm-template
         config:
           releaseName: tempo
           namespace: observability
           buildDependencies: true
           includeCRDs: true
-          path: ${{ vars.path_src }}/applications/tempo
-          outPath: ${{ vars.path_out }}/deploy/tempo
+          path: "${% vars.path_src %}/applications/tempo"
+          outPath: "${% vars.path_out %}/deploy/tempo"
           valuesFiles:
           - /tmp/values.yaml
       - task:
@@ -563,5 +563,5 @@ spec:
           apps:
           - name: prod-tempo
             sources:
-            - repoURL: ${{ vars.gitRepo }}
-              desiredRevision: ${{ outputs.promotion.commit }}
+            - repoURL: "${% vars.gitRepo %}"
+              desiredRevision: "${% outputs.promotion.commit %}"

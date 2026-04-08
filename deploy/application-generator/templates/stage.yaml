@@ -70,6 +70,8 @@ spec:
         vars:
         - name: asPR
           value: "true"
+        - name: commitMessage
+          value: "${% commitFrom(vars.gitRepo)?.Message ?? '' %}"
         - name: targetBranch
           value: env/prod/calico
       - uses: argocd-update
@@ -151,6 +153,8 @@ spec:
         vars:
         - name: asPR
           value: "true"
+        - name: commitMessage
+          value: "${% commitFrom(vars.gitRepo)?.Message ?? '' %}"
         - name: targetBranch
           value: env/prod/cert-manager
       - uses: argocd-update
@@ -232,6 +236,8 @@ spec:
         vars:
         - name: asPR
           value: "true"
+        - name: commitMessage
+          value: "${% commitFrom(vars.gitRepo)?.Message ?? '' %}"
         - name: targetBranch
           value: env/prod/grafana-alloy
       - uses: argocd-update
@@ -313,6 +319,8 @@ spec:
         vars:
         - name: asPR
           value: "true"
+        - name: commitMessage
+          value: "${% commitFrom(vars.gitRepo)?.Message ?? '' %}"
         - name: targetBranch
           value: env/prod/kube-prometheus-stack
       - uses: argocd-update
@@ -394,6 +402,8 @@ spec:
         vars:
         - name: asPR
           value: "true"
+        - name: commitMessage
+          value: "${% commitFrom(vars.gitRepo)?.Message ?? '' %}"
         - name: targetBranch
           value: env/prod/loki
       - uses: argocd-update
@@ -475,6 +485,8 @@ spec:
         vars:
         - name: asPR
           value: "true"
+        - name: commitMessage
+          value: "${% commitFrom(vars.gitRepo)?.Message ?? '' %}"
         - name: targetBranch
           value: env/prod/onepassword-connect
       - uses: argocd-update
@@ -556,6 +568,8 @@ spec:
         vars:
         - name: asPR
           value: "true"
+        - name: commitMessage
+          value: "${% commitFrom(vars.gitRepo)?.Message ?? '' %}"
         - name: targetBranch
           value: env/prod/tempo
       - uses: argocd-update

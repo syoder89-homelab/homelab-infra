@@ -38,6 +38,13 @@ resource "google_artifact_registry_repository" "tasmota_monitor" {
   description   = "Docker images for tasmota-monitor"
 }
 
+resource "google_artifact_registry_repository" "stock_ticker" {
+  repository_id = "stock-ticker"
+  location      = var.location
+  format        = "DOCKER"
+  description   = "Docker images for stock-ticker"
+}
+
 # --- Dedicated builder service accounts (one per service) ---
 
 resource "google_service_account" "tank_monitor_builder" {
@@ -50,6 +57,12 @@ resource "google_service_account" "tasmota_monitor_builder" {
   account_id   = "tasmota-monitor-builder"
   display_name = "tasmota-monitor Image Builder"
   description  = "Keyless image builds for tasmota-monitor via GitHub Actions OIDC"
+}
+
+resource "google_service_account" "stock_ticker_builder" {
+  account_id   = "stock-ticker-builder"
+  display_name = "stock-ticker Image Builder"
+  description  = "Keyless image builds for stock-ticker via GitHub Actions OIDC"
 }
 
 # --- Grant each SA write access to its own repository ONLY ---
@@ -70,6 +83,14 @@ resource "google_artifact_registry_repository_iam_member" "tasmota_monitor_write
   member     = "serviceAccount:${google_service_account.tasmota_monitor_builder.email}"
 }
 
+resource "google_artifact_registry_repository_iam_member" "stock_ticker_writer" {
+  project    = var.project_id
+  location   = var.location
+  repository = google_artifact_registry_repository.stock_ticker.name
+  role       = "roles/artifactregistry.writer"
+  member     = "serviceAccount:${google_service_account.stock_ticker_builder.email}"
+}
+
 # --- Public read access (images are not sensitive, eliminates pull secrets and Kargo credentials) ---
 
 resource "google_artifact_registry_repository_iam_member" "tank_monitor_public_reader" {
@@ -84,6 +105,14 @@ resource "google_artifact_registry_repository_iam_member" "tasmota_monitor_publi
   project    = var.project_id
   location   = var.location
   repository = google_artifact_registry_repository.tasmota_monitor.name
+  role       = "roles/artifactregistry.reader"
+  member     = "allUsers"
+}
+
+resource "google_artifact_registry_repository_iam_member" "stock_ticker_public_reader" {
+  project    = var.project_id
+  location   = var.location
+  repository = google_artifact_registry_repository.stock_ticker.name
   role       = "roles/artifactregistry.reader"
   member     = "allUsers"
 }
@@ -107,4 +136,10 @@ resource "google_service_account_iam_member" "tasmota_monitor_wif" {
   service_account_id = google_service_account.tasmota_monitor_builder.name
   role               = "roles/iam.workloadIdentityUser"
   member             = "principalSet://iam.googleapis.com/${data.google_iam_workload_identity_pool.github.name}/attribute.repository/${var.github_org}/tasmota-monitor"
+}
+
+resource "google_service_account_iam_member" "stock_ticker_wif" {
+  service_account_id = google_service_account.stock_ticker_builder.name
+  role               = "roles/iam.workloadIdentityUser"
+  member             = "principalSet://iam.googleapis.com/${data.google_iam_workload_identity_pool.github.name}/attribute.repository/${var.github_org}/stock-ticker"
 }

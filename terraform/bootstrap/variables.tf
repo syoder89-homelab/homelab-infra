@@ -24,7 +24,7 @@ variable "unrestricted_repos" {
 variable "main_only_repos" {
   description = "GitHub repos allowed to exchange OIDC tokens on refs/heads/main only (e.g. image builders)"
   type        = list(string)
-  default     = ["tank-monitor", "tasmota-monitor"]
+  default     = ["tank-monitor", "tasmota-monitor", "stock-ticker"]
 }
 
 variable "gke_deployer_repos" {

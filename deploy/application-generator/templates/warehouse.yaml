@@ -41,6 +41,25 @@ spec:
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
 metadata:
+  name: cloudflared
+  namespace: homelab-infra
+spec:
+  subscriptions:
+  - git:
+      branch: main
+      commitSelectionStrategy: NewestFromBranch
+      discoveryLimit: 10
+      strictSemvers: true
+      repoURL: https://github.com/syoder89-homelab/homelab-infra.git
+      includePaths:
+      - applications/cloudflared
+      # Alternate config strategy
+      #- stages/**/cloudflared-values.yaml
+---
+# Source: application-generator/templates/warehouse.yaml
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
   name: grafana-alloy
   namespace: homelab-infra
 spec:

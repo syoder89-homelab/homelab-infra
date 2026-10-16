@@ -64,6 +64,34 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
+  name: prod-cloudflared
+  namespace: argocd
+  annotations:
+    kargo.akuity.io/authorized-stage: homelab-infra:prod-cloudflared
+spec:
+  destination:
+    name: in-cluster
+    namespace: cloudflared
+  project: infra
+  source:
+    directory:
+      recurse: true
+    path: deploy/
+    repoURL: https://github.com/syoder89-homelab/homelab-infra
+    targetRevision: env/prod/cloudflared
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
+    - ClientSideApplyMigration=false
+---
+# Source: application-generator/templates/application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
   name: prod-grafana-alloy
   namespace: argocd
   annotations:

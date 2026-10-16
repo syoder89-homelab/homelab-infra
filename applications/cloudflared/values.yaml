@@ -1,0 +1,4 @@
+image:
+  repository: cloudflare/cloudflared
+  tag: "2026.10.1"
+replicas: 2

@@ -1,0 +1,9 @@
+apiVersion: v2
+name: cloudflared
+description: Cloudflare Tunnel connector for public access to cluster services
+namespace: cloudflared
+type: application
+version: "0.0.1"
+appVersion: "2026.10.1"
+clusterTypes:
+  - bare-metal
